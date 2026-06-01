@@ -1,19 +1,19 @@
 #include <stdio.h>
 #include <stdint.h>
 #include <string.h>
-
 #include "api.h"
 
-int main(void)
+int main(int argc, char *argv[])
 {
     uint8_t pk[PQCLEAN_MLKEM768_CLEAN_CRYPTO_PUBLICKEYBYTES];
     uint8_t sk[PQCLEAN_MLKEM768_CLEAN_CRYPTO_SECRETKEYBYTES];
     uint8_t ct[PQCLEAN_MLKEM768_CLEAN_CRYPTO_CIPHERTEXTBYTES];
     uint8_t ss_enc[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
     uint8_t ss_dec[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
-
+    int N = 100000;
     int ok = 0;
-    for (int i = 0; i < 100000; i++) {
+
+    for (int i = 0; i < N; i++) {
         // Key pair generation
         if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair(pk, sk) != 0) {
             printf("Key pair generation failed\n");
@@ -39,9 +39,9 @@ int main(void)
         } else {
             printf("Shared secrets do not match. Test failed.\n");
         }
-        if (i % 10000 == 0) {
+        if (i % N/10 == 0) {
             printf("Progress: %d\n", i);
         }
     }
-    printf("Test results: %d/%d passed.\n", ok, 10000);     
+    printf("Test results: %d/%d passed.\n", ok, N);
 }

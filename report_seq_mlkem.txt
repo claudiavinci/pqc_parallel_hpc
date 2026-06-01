@@ -1,0 +1,583 @@
+Flat profile:
+
+Each sample counts as 0.01 seconds.
+  %   cumulative   self              self     total           
+ time   seconds   seconds    calls  us/call  us/call  name    
+ 29.01     10.51    10.51 13122335     0.80     0.80  KeccakF1600_StatePermute
+ 13.36     15.35     4.84 4761600000     0.00     0.00  PQCLEAN_MLKEM768_CLEAN_montgomery_reduce
+  9.22     18.69     3.34  2722335     1.23     1.23  rej_uniform
+  5.77     20.78     2.09  5200000     0.40     0.65  keccak_absorb
+  5.58     22.80     2.02 1804800000     0.00     0.00  PQCLEAN_MLKEM768_CLEAN_barrett_reduce
+  5.55     24.82     2.01  7222335     0.28     1.46  keccak_squeezeblocks
+  5.35     26.76     1.94  1500000     1.29     2.20  PQCLEAN_MLKEM768_CLEAN_ntt
+  4.73     28.47     1.72 460800000     0.00     0.01  PQCLEAN_MLKEM768_CLEAN_basemul
+  4.68     30.17     1.70   900000     1.88     4.06  PQCLEAN_MLKEM768_CLEAN_invntt
+  2.76     31.17     1.00  2000000     0.50     0.50  cbd2
+  2.43     32.05     0.88  3700000     0.24     0.24  PQCLEAN_MLKEM768_CLEAN_poly_add
+  1.71     32.67     0.62   200000     3.10     3.10  PQCLEAN_MLKEM768_CLEAN_polyvec_compress
+  1.24     33.12     0.45   300000     1.50     2.21  PQCLEAN_MLKEM768_CLEAN_polyvec_add
+  1.21     33.56     0.44   200000     2.20     5.40  keccak_inc_absorb
+  0.99     33.92     0.36  3600000     0.10     1.23  PQCLEAN_MLKEM768_CLEAN_poly_basemul_montgomery
+  0.75     34.19     0.27   900000     0.30     0.30  PQCLEAN_MLKEM768_CLEAN_poly_frombytes
+  0.63     34.42     0.23  2400000     0.10     0.38  PQCLEAN_MLKEM768_CLEAN_poly_reduce
+  0.63     34.65     0.23   600000     0.38     0.38  PQCLEAN_MLKEM768_CLEAN_poly_tobytes
+  0.52     34.84     0.19  2000000     0.10     3.66  shake256
+  0.47     35.01     0.17  1500000     0.11     2.60  PQCLEAN_MLKEM768_CLEAN_poly_ntt
+  0.44     35.17     0.16   200000     0.80     0.80  PQCLEAN_MLKEM768_CLEAN_poly_compress
+  0.44     35.33     0.16   100000     1.60     1.60  PQCLEAN_MLKEM768_CLEAN_polyvec_decompress
+  0.36     35.46     0.13   100000     1.30     1.30  PQCLEAN_MLKEM768_CLEAN_verify
+  0.25     35.55     0.09   300000     0.30     2.41  sha3_512
+  0.22     35.63     0.08   100000     0.80     0.80  PQCLEAN_MLKEM768_CLEAN_poly_tomsg
+  0.19     35.70     0.07   200000     0.35     0.65  PQCLEAN_MLKEM768_CLEAN_poly_frommsg
+  0.17     35.76     0.06 51200000     0.00     0.00  PQCLEAN_MLKEM768_CLEAN_cmov_int16
+  0.17     35.82     0.06  2700000     0.02     0.67  PQCLEAN_MLKEM768_CLEAN_kyber_shake128_absorb
+  0.11     35.86     0.04  1200000     0.03     4.22  PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1
+  0.11     35.90     0.04   100000     0.40     0.40  PQCLEAN_MLKEM768_CLEAN_poly_decompress
+  0.11     35.94     0.04                             aes256_ctx_release
+  0.08     35.97     0.03   200000     0.15   112.09  PQCLEAN_MLKEM768_CLEAN_indcpa_enc
+  0.06     35.99     0.02  2722335     0.01     0.01  shake128_squeezeblocks
+  0.06     36.01     0.02  2000000     0.01     3.67  PQCLEAN_MLKEM768_CLEAN_kyber_shake256_prf
+  0.06     36.03     0.02  1200000     0.02     0.02  PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta1
+  0.06     36.05     0.02  1200000     0.02     4.56  PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery
+  0.06     36.07     0.02   300000     0.07    30.52  PQCLEAN_MLKEM768_CLEAN_gen_matrix
+  0.06     36.09     0.02   200000     0.10     2.21  sha3_256
+  0.06     36.11     0.02   100000     0.20    96.84  PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair_derand
+  0.06     36.13     0.02   100000     0.20    94.44  PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand
+  0.04     36.14     0.02                             PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair
+  0.03     36.15     0.01  2000000     0.01     0.01  shake256_absorb
+  0.03     36.16     0.01   800000     0.01     0.01  PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta2
+  0.03     36.17     0.01   800000     0.01     4.20  PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2
+  0.03     36.18     0.01   500000     0.02     5.23  PQCLEAN_MLKEM768_CLEAN_polyvec_ntt
+  0.03     36.19     0.01   300000     0.03     0.29  PQCLEAN_MLKEM768_CLEAN_poly_tomont
+  0.03     36.20     0.01   200000     0.05     0.82  PQCLEAN_MLKEM768_CLEAN_polyvec_tobytes
+  0.03     36.21     0.01   200000     0.05     0.05  PQCLEAN_randombytes
+  0.03     36.22     0.01   100000     0.10    20.73  PQCLEAN_MLKEM768_CLEAN_indcpa_dec
+  0.03     36.23     0.01   100000     0.10     0.10  PQCLEAN_MLKEM768_CLEAN_poly_sub
+  0.03     36.24     0.01                             shake128_ctx_clone
+  0.01     36.25     0.01   100000     0.05   116.75  PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc_derand
+  0.00     36.25     0.00  2700000     0.00     0.00  shake128_absorb
+  0.00     36.25     0.00  2700000     0.00     0.00  shake128_ctx_release
+  0.00     36.25     0.00   900000     0.00     0.00  PQCLEAN_MLKEM768_CLEAN_poly_invntt_tomont
+  0.00     36.25     0.00   300000     0.00     0.60  PQCLEAN_MLKEM768_CLEAN_polyvec_frombytes
+  0.00     36.25     0.00   300000     0.00     0.76  PQCLEAN_MLKEM768_CLEAN_polyvec_reduce
+  0.00     36.25     0.00   200000     0.00     8.12  PQCLEAN_MLKEM768_CLEAN_polyvec_invntt_tomont
+  0.00     36.25     0.00   200000     0.00     0.00  shake256_inc_absorb
+  0.00     36.25     0.00   100000     0.00     0.00  PQCLEAN_MLKEM768_CLEAN_cmov
+  0.00     36.25     0.00   100000     0.00    11.61  PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf
+  0.00     36.25     0.00   100000     0.00     0.80  keccak_inc_squeeze
+  0.00     36.25     0.00   100000     0.00     0.00  shake256_inc_ctx_release
+  0.00     36.25     0.00   100000     0.00     0.00  shake256_inc_finalize
+  0.00     36.25     0.00   100000     0.00     0.00  shake256_inc_init
+  0.00     36.25     0.00   100000     0.00     0.00  shake256_inc_squeeze
+
+ %         the percentage of the total running time of the
+time       program used by this function.
+
+cumulative a running sum of the number of seconds accounted
+ seconds   for by this function and those listed above it.
+
+ self      the number of seconds accounted for by this
+seconds    function alone.  This is the major sort for this
+           listing.
+
+calls      the number of times this function was invoked, if
+           this function is profiled, else blank.
+
+ self      the average number of milliseconds spent in this
+ms/call    function per call, if this function is profiled,
+	   else blank.
+
+ total     the average number of milliseconds spent in this
+ms/call    function and its descendents per call, if this
+	   function is profiled, else blank.
+
+name       the name of the function.  This is the minor sort
+           for this listing. The index shows the location of
+	   the function in the gprof listing. If the index is
+	   in parenthesis it shows where it would appear in
+	   the gprof listing if it were to be printed.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+		     Call graph (explanation follows)
+
+
+granularity: each sample hit covers 2 byte(s) for 0.03% of 36.25 seconds
+
+index % time    self  children    called     name
+                0.02   11.19  100000/200000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc_derand [4]
+                0.02   11.19  100000/200000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec [2]
+[1]     61.8    0.03   22.39  200000         PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.01    6.09  200000/300000      PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+                0.01    3.63  800000/1200000     PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [13]
+                0.01    3.35  800000/800000      PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2 [21]
+                0.02    2.51  600000/1200000     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1 [14]
+                0.75    0.87  400000/900000      PQCLEAN_MLKEM768_CLEAN_invntt [19]
+                0.00    1.62  200000/200000      PQCLEAN_MLKEM768_CLEAN_polyvec_invntt_tomont [28]
+                0.00    1.04  200000/500000      PQCLEAN_MLKEM768_CLEAN_polyvec_ntt [24]
+                0.62    0.00  200000/200000      PQCLEAN_MLKEM768_CLEAN_polyvec_compress [36]
+                0.02    0.50  200000/1500000     PQCLEAN_MLKEM768_CLEAN_poly_ntt [18]
+                0.30    0.14  200000/300000      PQCLEAN_MLKEM768_CLEAN_polyvec_add [35]
+                0.16    0.00  200000/200000      PQCLEAN_MLKEM768_CLEAN_poly_compress [43]
+                0.04    0.11  400000/2400000     PQCLEAN_MLKEM768_CLEAN_poly_reduce [32]
+                0.00    0.15  200000/300000      PQCLEAN_MLKEM768_CLEAN_polyvec_reduce [40]
+                0.07    0.06  200000/200000      PQCLEAN_MLKEM768_CLEAN_poly_frommsg [45]
+                0.00    0.12  200000/300000      PQCLEAN_MLKEM768_CLEAN_polyvec_frombytes [41]
+                0.10    0.00  400000/3700000     PQCLEAN_MLKEM768_CLEAN_poly_add [33]
+                0.06    0.00  200000/900000      PQCLEAN_MLKEM768_CLEAN_poly_frombytes [38]
+                0.00    0.00  400000/900000      PQCLEAN_MLKEM768_CLEAN_poly_invntt_tomont [62]
+-----------------------------------------------
+                                                 <spontaneous>
+[2]     40.9    0.00   14.81                 PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec [2]
+                0.02   11.19  100000/200000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.01    2.06  100000/100000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.00    1.16  100000/100000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+                0.03    0.21  100000/300000      sha3_512 [34]
+                0.13    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_verify [46]
+                0.00    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_cmov [64]
+-----------------------------------------------
+                                                 <spontaneous>
+[3]     32.2    0.00   11.68                 PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc [3]
+                0.01   11.67  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc_derand [4]
+                0.01    0.00  100000/200000      PQCLEAN_randombytes [57]
+-----------------------------------------------
+                0.01   11.67  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc [3]
+[4]     32.2    0.01   11.67  100000         PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc_derand [4]
+                0.02   11.19  100000/200000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.03    0.21  100000/300000      sha3_512 [34]
+                0.01    0.21  100000/200000      sha3_256 [37]
+-----------------------------------------------
+                0.06    0.24  200000/7222335     sha3_256 [37]
+                0.08    0.35  300000/7222335     sha3_512 [34]
+                0.76    3.21 2722335/7222335     PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+                1.11    4.71 4000000/7222335     shake256 [12]
+[5]     29.0    2.01    8.51 7222335         keccak_squeezeblocks [5]
+                8.51    0.00 10622335/13122335     KeccakF1600_StatePermute [6]
+-----------------------------------------------
+                0.08    0.00  100000/13122335     keccak_inc_squeeze [48]
+                0.64    0.00  800000/13122335     keccak_inc_absorb [30]
+                1.28    0.00 1600000/13122335     keccak_absorb [20]
+                8.51    0.00 10622335/13122335     keccak_squeezeblocks [5]
+[6]     29.0   10.51    0.00 13122335         KeccakF1600_StatePermute [6]
+-----------------------------------------------
+                                                 <spontaneous>
+[7]     26.8    0.02    9.69                 PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair [7]
+                0.02    9.66  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair_derand [8]
+                0.01    0.00  100000/200000      PQCLEAN_randombytes [57]
+-----------------------------------------------
+                0.02    9.66  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair [7]
+[8]     26.7    0.02    9.66  100000         PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair_derand [8]
+                0.02    9.42  100000/100000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.01    0.21  100000/200000      sha3_256 [37]
+-----------------------------------------------
+                0.02    9.42  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair_derand [8]
+[9]     26.1    0.02    9.42  100000         PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.01    3.05  100000/300000      PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+                0.02    2.51  600000/1200000     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1 [14]
+                0.01    1.36  300000/1200000     PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [13]
+                0.00    1.04  200000/500000      PQCLEAN_MLKEM768_CLEAN_polyvec_ntt [24]
+                0.02    0.50  200000/1500000     PQCLEAN_MLKEM768_CLEAN_poly_ntt [18]
+                0.03    0.21  100000/300000      sha3_512 [34]
+                0.15    0.07  100000/300000      PQCLEAN_MLKEM768_CLEAN_polyvec_add [35]
+                0.01    0.15  200000/200000      PQCLEAN_MLKEM768_CLEAN_polyvec_tobytes [42]
+                0.01    0.08  300000/300000      PQCLEAN_MLKEM768_CLEAN_poly_tomont [47]
+                0.08    0.00  200000/600000      PQCLEAN_MLKEM768_CLEAN_poly_tobytes [39]
+                0.00    0.08  100000/300000      PQCLEAN_MLKEM768_CLEAN_polyvec_reduce [40]
+                0.01    0.03  100000/2400000     PQCLEAN_MLKEM768_CLEAN_poly_reduce [32]
+-----------------------------------------------
+                0.01    3.05  100000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.01    6.09  200000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[10]    25.3    0.02    9.14  300000         PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+                0.76    3.21 2722335/7222335     keccak_squeezeblocks [5]
+                3.34    0.00 2722335/2722335     rej_uniform [22]
+                0.06    1.75 2700000/2700000     PQCLEAN_MLKEM768_CLEAN_kyber_shake128_absorb [27]
+                0.02    0.00 2722335/2722335     shake128_squeezeblocks [53]
+                0.00    0.00 2700000/2700000     shake128_ctx_release [61]
+-----------------------------------------------
+                0.01    2.93  800000/2000000     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2 [21]
+                0.01    4.39 1200000/2000000     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1 [14]
+[11]    20.3    0.02    7.32 2000000         PQCLEAN_MLKEM768_CLEAN_kyber_shake256_prf [11]
+                0.19    7.13 2000000/2000000     shake256 [12]
+-----------------------------------------------
+                0.19    7.13 2000000/2000000     PQCLEAN_MLKEM768_CLEAN_kyber_shake256_prf [11]
+[12]    20.2    0.19    7.13 2000000         shake256 [12]
+                1.11    4.71 4000000/7222335     keccak_squeezeblocks [5]
+                0.80    0.49 2000000/5200000     keccak_absorb [20]
+                0.01    0.00 2000000/2000000     shake256_absorb [55]
+-----------------------------------------------
+                0.00    0.45  100000/1200000     PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.01    1.36  300000/1200000     PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.01    3.63  800000/1200000     PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[13]    15.1    0.02    5.45 1200000         PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [13]
+                0.36    4.06 3600000/3600000     PQCLEAN_MLKEM768_CLEAN_poly_basemul_montgomery [16]
+                0.57    0.00 2400000/3700000     PQCLEAN_MLKEM768_CLEAN_poly_add [33]
+                0.12    0.34 1200000/2400000     PQCLEAN_MLKEM768_CLEAN_poly_reduce [32]
+-----------------------------------------------
+                0.02    2.51  600000/1200000     PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.02    2.51  600000/1200000     PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[14]    14.0    0.04    5.03 1200000         PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1 [14]
+                0.01    4.39 1200000/2000000     PQCLEAN_MLKEM768_CLEAN_kyber_shake256_prf [11]
+                0.60    0.00 1200000/2000000     cbd2 [31]
+                0.02    0.00 1200000/1200000     PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta1 [54]
+-----------------------------------------------
+                0.08    0.00 76800000/4761600000     PQCLEAN_MLKEM768_CLEAN_poly_tomont [47]
+                1.05    0.00 1036800000/4761600000     PQCLEAN_MLKEM768_CLEAN_invntt [19]
+                1.37    0.00 1344000000/4761600000     PQCLEAN_MLKEM768_CLEAN_ntt [23]
+                2.34    0.00 2304000000/4761600000     PQCLEAN_MLKEM768_CLEAN_basemul [17]
+[15]    13.4    4.84    0.00 4761600000         PQCLEAN_MLKEM768_CLEAN_montgomery_reduce [15]
+-----------------------------------------------
+                0.36    4.06 3600000/3600000     PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [13]
+[16]    12.2    0.36    4.06 3600000         PQCLEAN_MLKEM768_CLEAN_poly_basemul_montgomery [16]
+                1.72    2.34 460800000/460800000     PQCLEAN_MLKEM768_CLEAN_basemul [17]
+-----------------------------------------------
+                1.72    2.34 460800000/460800000     PQCLEAN_MLKEM768_CLEAN_poly_basemul_montgomery [16]
+[17]    11.2    1.72    2.34 460800000         PQCLEAN_MLKEM768_CLEAN_basemul [17]
+                2.34    0.00 2304000000/4761600000     PQCLEAN_MLKEM768_CLEAN_montgomery_reduce [15]
+-----------------------------------------------
+                0.01    0.25  100000/1500000     PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.02    0.50  200000/1500000     PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.02    0.50  200000/1500000     PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.11    2.49 1000000/1500000     PQCLEAN_MLKEM768_CLEAN_polyvec_ntt [24]
+[18]    10.8    0.17    3.74 1500000         PQCLEAN_MLKEM768_CLEAN_poly_ntt [18]
+                1.94    1.37 1500000/1500000     PQCLEAN_MLKEM768_CLEAN_ntt [23]
+                0.43    0.00 384000000/1804800000     PQCLEAN_MLKEM768_CLEAN_barrett_reduce [26]
+-----------------------------------------------
+                0.19    0.22  100000/900000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.75    0.87  400000/900000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.75    0.87  400000/900000      PQCLEAN_MLKEM768_CLEAN_polyvec_invntt_tomont [28]
+[19]    10.1    1.70    1.96  900000         PQCLEAN_MLKEM768_CLEAN_invntt [19]
+                1.05    0.00 1036800000/4761600000     PQCLEAN_MLKEM768_CLEAN_montgomery_reduce [15]
+                0.90    0.00 806400000/1804800000     PQCLEAN_MLKEM768_CLEAN_barrett_reduce [26]
+-----------------------------------------------
+                0.08    0.05  200000/5200000     sha3_256 [37]
+                0.12    0.07  300000/5200000     sha3_512 [34]
+                0.80    0.49 2000000/5200000     shake256 [12]
+                1.09    0.67 2700000/5200000     PQCLEAN_MLKEM768_CLEAN_kyber_shake128_absorb [27]
+[20]     9.3    2.09    1.28 5200000         keccak_absorb [20]
+                1.28    0.00 1600000/13122335     KeccakF1600_StatePermute [6]
+-----------------------------------------------
+                0.01    3.35  800000/800000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[21]     9.3    0.01    3.35  800000         PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2 [21]
+                0.01    2.93  800000/2000000     PQCLEAN_MLKEM768_CLEAN_kyber_shake256_prf [11]
+                0.40    0.00  800000/2000000     cbd2 [31]
+                0.01    0.00  800000/800000      PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta2 [56]
+-----------------------------------------------
+                3.34    0.00 2722335/2722335     PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+[22]     9.2    3.34    0.00 2722335         rej_uniform [22]
+-----------------------------------------------
+                1.94    1.37 1500000/1500000     PQCLEAN_MLKEM768_CLEAN_poly_ntt [18]
+[23]     9.1    1.94    1.37 1500000         PQCLEAN_MLKEM768_CLEAN_ntt [23]
+                1.37    0.00 1344000000/4761600000     PQCLEAN_MLKEM768_CLEAN_montgomery_reduce [15]
+-----------------------------------------------
+                0.00    0.52  100000/500000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.00    1.04  200000/500000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.00    1.04  200000/500000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[24]     7.2    0.01    2.60  500000         PQCLEAN_MLKEM768_CLEAN_polyvec_ntt [24]
+                0.11    2.49 1000000/1500000     PQCLEAN_MLKEM768_CLEAN_poly_ntt [18]
+-----------------------------------------------
+                0.01    2.06  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec [2]
+[25]     5.7    0.01    2.06  100000         PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.00    0.52  100000/500000      PQCLEAN_MLKEM768_CLEAN_polyvec_ntt [24]
+                0.00    0.45  100000/1200000     PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [13]
+                0.19    0.22  100000/900000      PQCLEAN_MLKEM768_CLEAN_invntt [19]
+                0.01    0.25  100000/1500000     PQCLEAN_MLKEM768_CLEAN_poly_ntt [18]
+                0.16    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_polyvec_decompress [44]
+                0.08    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_poly_tomsg [49]
+                0.00    0.06  100000/300000      PQCLEAN_MLKEM768_CLEAN_polyvec_frombytes [41]
+                0.04    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_poly_decompress [51]
+                0.01    0.03  100000/2400000     PQCLEAN_MLKEM768_CLEAN_poly_reduce [32]
+                0.03    0.00  100000/900000      PQCLEAN_MLKEM768_CLEAN_poly_frombytes [38]
+                0.01    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_poly_sub [58]
+                0.00    0.00  100000/900000      PQCLEAN_MLKEM768_CLEAN_poly_invntt_tomont [62]
+-----------------------------------------------
+                0.43    0.00 384000000/1804800000     PQCLEAN_MLKEM768_CLEAN_poly_ntt [18]
+                0.69    0.00 614400000/1804800000     PQCLEAN_MLKEM768_CLEAN_poly_reduce [32]
+                0.90    0.00 806400000/1804800000     PQCLEAN_MLKEM768_CLEAN_invntt [19]
+[26]     5.6    2.02    0.00 1804800000         PQCLEAN_MLKEM768_CLEAN_barrett_reduce [26]
+-----------------------------------------------
+                0.06    1.75 2700000/2700000     PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+[27]     5.0    0.06    1.75 2700000         PQCLEAN_MLKEM768_CLEAN_kyber_shake128_absorb [27]
+                1.09    0.67 2700000/5200000     keccak_absorb [20]
+                0.00    0.00 2700000/2700000     shake128_absorb [60]
+-----------------------------------------------
+                0.00    1.62  200000/200000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[28]     4.5    0.00    1.62  200000         PQCLEAN_MLKEM768_CLEAN_polyvec_invntt_tomont [28]
+                0.75    0.87  400000/900000      PQCLEAN_MLKEM768_CLEAN_invntt [19]
+                0.00    0.00  400000/900000      PQCLEAN_MLKEM768_CLEAN_poly_invntt_tomont [62]
+-----------------------------------------------
+                0.00    1.16  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec [2]
+[29]     3.2    0.00    1.16  100000         PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+                0.44    0.64  200000/200000      keccak_inc_absorb [30]
+                0.00    0.08  100000/100000      keccak_inc_squeeze [48]
+                0.00    0.00  200000/200000      shake256_inc_absorb [63]
+                0.00    0.00  100000/100000      shake256_inc_init [67]
+                0.00    0.00  100000/100000      shake256_inc_finalize [66]
+                0.00    0.00  100000/100000      shake256_inc_ctx_release [65]
+                0.00    0.00  100000/100000      shake256_inc_squeeze [68]
+-----------------------------------------------
+                0.44    0.64  200000/200000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+[30]     3.0    0.44    0.64  200000         keccak_inc_absorb [30]
+                0.64    0.00  800000/13122335     KeccakF1600_StatePermute [6]
+-----------------------------------------------
+                0.40    0.00  800000/2000000     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2 [21]
+                0.60    0.00 1200000/2000000     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1 [14]
+[31]     2.8    1.00    0.00 2000000         cbd2 [31]
+-----------------------------------------------
+                0.01    0.03  100000/2400000     PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.01    0.03  100000/2400000     PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.04    0.11  400000/2400000     PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.06    0.17  600000/2400000     PQCLEAN_MLKEM768_CLEAN_polyvec_reduce [40]
+                0.12    0.34 1200000/2400000     PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [13]
+[32]     2.5    0.23    0.69 2400000         PQCLEAN_MLKEM768_CLEAN_poly_reduce [32]
+                0.69    0.00 614400000/1804800000     PQCLEAN_MLKEM768_CLEAN_barrett_reduce [26]
+-----------------------------------------------
+                0.10    0.00  400000/3700000     PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.21    0.00  900000/3700000     PQCLEAN_MLKEM768_CLEAN_polyvec_add [35]
+                0.57    0.00 2400000/3700000     PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [13]
+[33]     2.4    0.88    0.00 3700000         PQCLEAN_MLKEM768_CLEAN_poly_add [33]
+-----------------------------------------------
+                0.03    0.21  100000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.03    0.21  100000/300000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc_derand [4]
+                0.03    0.21  100000/300000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec [2]
+[34]     2.0    0.09    0.63  300000         sha3_512 [34]
+                0.08    0.35  300000/7222335     keccak_squeezeblocks [5]
+                0.12    0.07  300000/5200000     keccak_absorb [20]
+-----------------------------------------------
+                0.15    0.07  100000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.30    0.14  200000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[35]     1.8    0.45    0.21  300000         PQCLEAN_MLKEM768_CLEAN_polyvec_add [35]
+                0.21    0.00  900000/3700000     PQCLEAN_MLKEM768_CLEAN_poly_add [33]
+-----------------------------------------------
+                0.62    0.00  200000/200000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[36]     1.7    0.62    0.00  200000         PQCLEAN_MLKEM768_CLEAN_polyvec_compress [36]
+-----------------------------------------------
+                0.01    0.21  100000/200000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair_derand [8]
+                0.01    0.21  100000/200000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc_derand [4]
+[37]     1.2    0.02    0.42  200000         sha3_256 [37]
+                0.06    0.24  200000/7222335     keccak_squeezeblocks [5]
+                0.08    0.05  200000/5200000     keccak_absorb [20]
+-----------------------------------------------
+                0.03    0.00  100000/900000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.06    0.00  200000/900000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.18    0.00  600000/900000      PQCLEAN_MLKEM768_CLEAN_polyvec_frombytes [41]
+[38]     0.7    0.27    0.00  900000         PQCLEAN_MLKEM768_CLEAN_poly_frombytes [38]
+-----------------------------------------------
+                0.08    0.00  200000/600000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.15    0.00  400000/600000      PQCLEAN_MLKEM768_CLEAN_polyvec_tobytes [42]
+[39]     0.6    0.23    0.00  600000         PQCLEAN_MLKEM768_CLEAN_poly_tobytes [39]
+-----------------------------------------------
+                0.00    0.08  100000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+                0.00    0.15  200000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[40]     0.6    0.00    0.23  300000         PQCLEAN_MLKEM768_CLEAN_polyvec_reduce [40]
+                0.06    0.17  600000/2400000     PQCLEAN_MLKEM768_CLEAN_poly_reduce [32]
+-----------------------------------------------
+                0.00    0.06  100000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.00    0.12  200000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[41]     0.5    0.00    0.18  300000         PQCLEAN_MLKEM768_CLEAN_polyvec_frombytes [41]
+                0.18    0.00  600000/900000      PQCLEAN_MLKEM768_CLEAN_poly_frombytes [38]
+-----------------------------------------------
+                0.01    0.15  200000/200000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+[42]     0.5    0.01    0.15  200000         PQCLEAN_MLKEM768_CLEAN_polyvec_tobytes [42]
+                0.15    0.00  400000/600000      PQCLEAN_MLKEM768_CLEAN_poly_tobytes [39]
+-----------------------------------------------
+                0.16    0.00  200000/200000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[43]     0.4    0.16    0.00  200000         PQCLEAN_MLKEM768_CLEAN_poly_compress [43]
+-----------------------------------------------
+                0.16    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+[44]     0.4    0.16    0.00  100000         PQCLEAN_MLKEM768_CLEAN_polyvec_decompress [44]
+-----------------------------------------------
+                0.07    0.06  200000/200000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+[45]     0.4    0.07    0.06  200000         PQCLEAN_MLKEM768_CLEAN_poly_frommsg [45]
+                0.06    0.00 51200000/51200000     PQCLEAN_MLKEM768_CLEAN_cmov_int16 [50]
+-----------------------------------------------
+                0.13    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec [2]
+[46]     0.4    0.13    0.00  100000         PQCLEAN_MLKEM768_CLEAN_verify [46]
+-----------------------------------------------
+                0.01    0.08  300000/300000      PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [9]
+[47]     0.2    0.01    0.08  300000         PQCLEAN_MLKEM768_CLEAN_poly_tomont [47]
+                0.08    0.00 76800000/4761600000     PQCLEAN_MLKEM768_CLEAN_montgomery_reduce [15]
+-----------------------------------------------
+                0.00    0.08  100000/100000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+[48]     0.2    0.00    0.08  100000         keccak_inc_squeeze [48]
+                0.08    0.00  100000/13122335     KeccakF1600_StatePermute [6]
+-----------------------------------------------
+                0.08    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+[49]     0.2    0.08    0.00  100000         PQCLEAN_MLKEM768_CLEAN_poly_tomsg [49]
+-----------------------------------------------
+                0.06    0.00 51200000/51200000     PQCLEAN_MLKEM768_CLEAN_poly_frommsg [45]
+[50]     0.2    0.06    0.00 51200000         PQCLEAN_MLKEM768_CLEAN_cmov_int16 [50]
+-----------------------------------------------
+                0.04    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+[51]     0.1    0.04    0.00  100000         PQCLEAN_MLKEM768_CLEAN_poly_decompress [51]
+-----------------------------------------------
+                                                 <spontaneous>
+[52]     0.1    0.04    0.00                 aes256_ctx_release [52]
+-----------------------------------------------
+                0.02    0.00 2722335/2722335     PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+[53]     0.1    0.02    0.00 2722335         shake128_squeezeblocks [53]
+-----------------------------------------------
+                0.02    0.00 1200000/1200000     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1 [14]
+[54]     0.1    0.02    0.00 1200000         PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta1 [54]
+-----------------------------------------------
+                0.01    0.00 2000000/2000000     shake256 [12]
+[55]     0.0    0.01    0.00 2000000         shake256_absorb [55]
+-----------------------------------------------
+                0.01    0.00  800000/800000      PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2 [21]
+[56]     0.0    0.01    0.00  800000         PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta2 [56]
+-----------------------------------------------
+                0.01    0.00  100000/200000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair [7]
+                0.01    0.00  100000/200000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc [3]
+[57]     0.0    0.01    0.00  200000         PQCLEAN_randombytes [57]
+-----------------------------------------------
+                0.01    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+[58]     0.0    0.01    0.00  100000         PQCLEAN_MLKEM768_CLEAN_poly_sub [58]
+-----------------------------------------------
+                                                 <spontaneous>
+[59]     0.0    0.01    0.00                 shake128_ctx_clone [59]
+-----------------------------------------------
+                0.00    0.00 2700000/2700000     PQCLEAN_MLKEM768_CLEAN_kyber_shake128_absorb [27]
+[60]     0.0    0.00    0.00 2700000         shake128_absorb [60]
+-----------------------------------------------
+                0.00    0.00 2700000/2700000     PQCLEAN_MLKEM768_CLEAN_gen_matrix [10]
+[61]     0.0    0.00    0.00 2700000         shake128_ctx_release [61]
+-----------------------------------------------
+                0.00    0.00  100000/900000      PQCLEAN_MLKEM768_CLEAN_indcpa_dec [25]
+                0.00    0.00  400000/900000      PQCLEAN_MLKEM768_CLEAN_indcpa_enc [1]
+                0.00    0.00  400000/900000      PQCLEAN_MLKEM768_CLEAN_polyvec_invntt_tomont [28]
+[62]     0.0    0.00    0.00  900000         PQCLEAN_MLKEM768_CLEAN_poly_invntt_tomont [62]
+-----------------------------------------------
+                0.00    0.00  200000/200000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+[63]     0.0    0.00    0.00  200000         shake256_inc_absorb [63]
+-----------------------------------------------
+                0.00    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec [2]
+[64]     0.0    0.00    0.00  100000         PQCLEAN_MLKEM768_CLEAN_cmov [64]
+-----------------------------------------------
+                0.00    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+[65]     0.0    0.00    0.00  100000         shake256_inc_ctx_release [65]
+-----------------------------------------------
+                0.00    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+[66]     0.0    0.00    0.00  100000         shake256_inc_finalize [66]
+-----------------------------------------------
+                0.00    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+[67]     0.0    0.00    0.00  100000         shake256_inc_init [67]
+-----------------------------------------------
+                0.00    0.00  100000/100000      PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [29]
+[68]     0.0    0.00    0.00  100000         shake256_inc_squeeze [68]
+-----------------------------------------------
+
+ This table describes the call tree of the program, and was sorted by
+ the total amount of time spent in each function and its children.
+
+ Each entry in this table consists of several lines.  The line with the
+ index number at the left hand margin lists the current function.
+ The lines above it list the functions that called this function,
+ and the lines below it list the functions this one called.
+ This line lists:
+     index	A unique number given to each element of the table.
+		Index numbers are sorted numerically.
+		The index number is printed next to every function name so
+		it is easier to look up where the function is in the table.
+
+     % time	This is the percentage of the `total' time that was spent
+		in this function and its children.  Note that due to
+		different viewpoints, functions excluded by options, etc,
+		these numbers will NOT add up to 100%.
+
+     self	This is the total amount of time spent in this function.
+
+     children	This is the total amount of time propagated into this
+		function by its children.
+
+     called	This is the number of times the function was called.
+		If the function called itself recursively, the number
+		only includes non-recursive calls, and is followed by
+		a `+' and the number of recursive calls.
+
+     name	The name of the current function.  The index number is
+		printed after it.  If the function is a member of a
+		cycle, the cycle number is printed between the
+		function's name and the index number.
+
+
+ For the function's parents, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the function into this parent.
+
+     children	This is the amount of time that was propagated from
+		the function's children into this parent.
+
+     called	This is the number of times this parent called the
+		function `/' the total number of times the function
+		was called.  Recursive calls to the function are not
+		included in the number after the `/'.
+
+     name	This is the name of the parent.  The parent's index
+		number is printed after it.  If the parent is a
+		member of a cycle, the cycle number is printed between
+		the name and the index number.
+
+ If the parents of the function cannot be determined, the word
+ `<spontaneous>' is printed in the `name' field, and all the other
+ fields are blank.
+
+ For the function's children, the fields have the following meanings:
+
+     self	This is the amount of time that was propagated directly
+		from the child into the function.
+
+     children	This is the amount of time that was propagated from the
+		child's children to the function.
+
+     called	This is the number of times the function called
+		this child `/' the total number of times the child
+		was called.  Recursive calls by the child are not
+		listed in the number after the `/'.
+
+     name	This is the name of the child.  The child's index
+		number is printed after it.  If the child is a
+		member of a cycle, the cycle number is printed
+		between the name and the index number.
+
+ If there are any cycles (circles) in the call graph, there is an
+ entry for the cycle-as-a-whole.  This entry shows who called the
+ cycle (as parents) and the members of the cycle (as children.)
+ The `+' recursive calls entry shows the number of function calls that
+ were internal to the cycle, and the calls entry for each member shows,
+ for that member, how many times it was called from other members of
+ the cycle.
+
+Copyright (C) 2012-2020 Free Software Foundation, Inc.
+
+Copying and distribution of this file, with or without modification,
+are permitted in any medium without royalty provided the copyright
+notice and this notice are preserved.
+
+Index by function name
+
+   [6] KeccakF1600_StatePermute [43] PQCLEAN_MLKEM768_CLEAN_poly_compress [46] PQCLEAN_MLKEM768_CLEAN_verify
+  [26] PQCLEAN_MLKEM768_CLEAN_barrett_reduce [51] PQCLEAN_MLKEM768_CLEAN_poly_decompress [57] PQCLEAN_randombytes
+  [17] PQCLEAN_MLKEM768_CLEAN_basemul [38] PQCLEAN_MLKEM768_CLEAN_poly_frombytes [52] aes256_ctx_release
+  [64] PQCLEAN_MLKEM768_CLEAN_cmov [45] PQCLEAN_MLKEM768_CLEAN_poly_frommsg [31] cbd2
+  [50] PQCLEAN_MLKEM768_CLEAN_cmov_int16 [14] PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1 [20] keccak_absorb
+   [4] PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc_derand [21] PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2 [30] keccak_inc_absorb
+   [7] PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair [62] PQCLEAN_MLKEM768_CLEAN_poly_invntt_tomont [48] keccak_inc_squeeze
+   [8] PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair_derand [18] PQCLEAN_MLKEM768_CLEAN_poly_ntt [5] keccak_squeezeblocks
+  [10] PQCLEAN_MLKEM768_CLEAN_gen_matrix [32] PQCLEAN_MLKEM768_CLEAN_poly_reduce [22] rej_uniform
+  [25] PQCLEAN_MLKEM768_CLEAN_indcpa_dec [58] PQCLEAN_MLKEM768_CLEAN_poly_sub [37] sha3_256
+   [1] PQCLEAN_MLKEM768_CLEAN_indcpa_enc [39] PQCLEAN_MLKEM768_CLEAN_poly_tobytes [34] sha3_512
+   [9] PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand [47] PQCLEAN_MLKEM768_CLEAN_poly_tomont [60] shake128_absorb
+  [19] PQCLEAN_MLKEM768_CLEAN_invntt [49] PQCLEAN_MLKEM768_CLEAN_poly_tomsg [59] shake128_ctx_clone
+  [27] PQCLEAN_MLKEM768_CLEAN_kyber_shake128_absorb [35] PQCLEAN_MLKEM768_CLEAN_polyvec_add [61] shake128_ctx_release
+  [11] PQCLEAN_MLKEM768_CLEAN_kyber_shake256_prf [13] PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery [53] shake128_squeezeblocks
+  [29] PQCLEAN_MLKEM768_CLEAN_kyber_shake256_rkprf [36] PQCLEAN_MLKEM768_CLEAN_polyvec_compress [12] shake256
+  [15] PQCLEAN_MLKEM768_CLEAN_montgomery_reduce [44] PQCLEAN_MLKEM768_CLEAN_polyvec_decompress [55] shake256_absorb
+  [23] PQCLEAN_MLKEM768_CLEAN_ntt [41] PQCLEAN_MLKEM768_CLEAN_polyvec_frombytes [63] shake256_inc_absorb
+  [33] PQCLEAN_MLKEM768_CLEAN_poly_add [28] PQCLEAN_MLKEM768_CLEAN_polyvec_invntt_tomont [65] shake256_inc_ctx_release
+  [16] PQCLEAN_MLKEM768_CLEAN_poly_basemul_montgomery [24] PQCLEAN_MLKEM768_CLEAN_polyvec_ntt [66] shake256_inc_finalize
+  [54] PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta1 [40] PQCLEAN_MLKEM768_CLEAN_polyvec_reduce [67] shake256_inc_init
+  [56] PQCLEAN_MLKEM768_CLEAN_poly_cbd_eta2 [42] PQCLEAN_MLKEM768_CLEAN_polyvec_tobytes [68] shake256_inc_squeeze
