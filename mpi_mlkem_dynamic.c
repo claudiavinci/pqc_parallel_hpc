@@ -1,12 +1,12 @@
-#include <mpi.h>
-#include <omp.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
+#include <string.h>
 #include "api.h"
+#include <mpi.h>
 
 #define N_JOBS 100000
-
+#define CHUNK_SIZE 1000
 // Tag MPI per distinguere i messaggi
 #define TAG_REQUEST 1
 #define TAG_JOB     2
@@ -72,7 +72,7 @@ int main(int argc, char *argv[]) {
     }
 
     MPI_Barrier(MPI_COMM_WORLD);
-    double start_time = MPI_Wtime();
+    double t0 = MPI_Wtime();
 
     // ==================== LOGICA DEL MASTER ====================
     if (rank == 0) {
@@ -80,6 +80,7 @@ int main(int argc, char *argv[]) {
         int active_workers = size - 1;
         MPI_Status status;
         int dummy_buf;
+        double global_elapsed = 0.0;
 
         while (active_workers > 0) {
             // Aspetta una richiesta da QUALSIASI worker
@@ -89,7 +90,7 @@ int main(int argc, char *argv[]) {
             if (next_job < N_JOBS) {
                 // Ci sono ancora job disponibili: assegna il job al worker
                 MPI_Send(&next_job, 1, MPI_INT, worker_rank, TAG_JOB, MPI_COMM_WORLD);
-                next_job++;
+                next_job += CHUNK_SIZE;
             } else {
                 // Job terminati: invia il segnale di terminazione al worker
                 MPI_Send(&dummy_buf, 0, MPI_INT, worker_rank, TAG_DIE, MPI_COMM_WORLD);
@@ -97,16 +98,22 @@ int main(int argc, char *argv[]) {
             }
         }
 
-        double end_time = MPI_Wtime();
-        printf("DYNAMIC;%d;%d;%f\n", size, N_JOBS, end_time - start_time);
+        double t1 = MPI_Wtime();
+        global_elapsed = t1 - t0;
+        printf("\n=========== PARALLEL EXECUTION COMPLETED ===========");
+        printf("\nMapping:          DYNAMIC (Chunking)");
+        printf("\nActive MPI nodes:  %d", size);
+        printf("\nJobs requested:    %d", N_JOBS);
+        printf("\nTotal time:    %f sec", global_elapsed);
+        printf("\n====================================================\n");
     } 
     // ==================== LOGICA DEI WORKER ====================
     else {
         int job_to_do;
         int dummy_req = 1;
         MPI_Status status;
-
         kem_job current_job;
+
         while (1) {
             // 1. Invia una richiesta di lavoro al Master
             MPI_Send(&dummy_req, 1, MPI_INT, 0, TAG_REQUEST, MPI_COMM_WORLD);
@@ -118,8 +125,16 @@ int main(int argc, char *argv[]) {
                 // Non c'è più lavoro, esci dal ciclo
                 break;
             }
-            // 3. Esegui il KEM Job (Sfrutta OpenMP internamente)
-            int status = run_kem_job(&current_job);
+
+            int curr_chunk_size = CHUNK_SIZE;
+            if (job_to_do + CHUNK_SIZE > N_JOBS) {
+                curr_chunk_size = N_JOBS - job_to_do; // Adatta l'ultimo se supera N_JOBS
+            }
+            for (int i = 0; i < curr_chunk_size; i++) {
+                // 3. Esegui il KEM Job (Sfrutta OpenMP internamente)
+                int status = run_kem_job(&current_job);
+            }
+        }
     }
 
     MPI_Finalize();
