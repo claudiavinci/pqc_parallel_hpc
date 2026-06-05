@@ -79,55 +79,89 @@ static int16_t fqmul(int16_t a, int16_t b) {
 *
 * Arguments:   - int16_t r[256]: pointer to input/output vector of elements of Zq
 **************************************************/
-// void PQCLEAN_MLKEM768_CLEAN_ntt(int16_t r[256]) {
-//     unsigned int len, start, j, k;
-//     int16_t t, zeta;
-
-//     k = 1;
-//     for (len = 128; len >= 2; len >>= 1) {
-//         for (start = 0; start < 256; start = j + len) {
-//             zeta = PQCLEAN_MLKEM768_CLEAN_zetas[k++];
-//             for (j = start; j < start + len; j++) {
-//                 t = fqmul(zeta, r[j + len]);
-//                 r[j + len] = r[j] - t;
-//                 r[j] = r[j] + t;
-//             }
-//         }
-//     }
-// }
-
 void PQCLEAN_MLKEM768_CLEAN_ntt(int16_t r[256]) {
-    unsigned int len, start, j;
-    // k = 1;
-    // lo zeta da usare nella versione sequenziale viene selezionato tramite k++;
-    // tuttavia, se thread diversi operano su blocchi diversi -> race condition su k
-    // ntt lavora a livelli -> 
-    // livello 1, len = 128, zeta = zetas[1]; 
-    // livello 2, len = 64, servono 2 coeff, zeta = zetas[2] e zetas[3] ecc
-    // livello 3, servono 4 coeff che vanno da zetas[4] a zetas[7]
-    // Notiamo che l'indice iniziale di ogni livello (che chiamiamo k_base) si trova sempre facendo 128/len.
-    // dentro lo stesso livello, k aumenta di 1 ogni volta che si passa a un nuovo blocco -> start avanza di 2*len
-    // quindi, blocchi superati = start/(2*len) -> k = k_base + start/(2*len) -> k = 128/len + start/(2*len)
+    unsigned int len, start, j, k;
+    int16_t t, zeta;
 
+    k = 1;
     for (len = 128; len >= 2; len >>= 1) {
-        printf("Inizia for len: %u\n", len);
-        unsigned int k_base = 128/len;
-        #pragma omp for private(j, start) schedule(static)
-        for (start = 0; start < 256; start += 2*len) {
-            unsigned int local_k = k_base + (start/(2*len));
-            int16_t zeta = PQCLEAN_MLKEM768_CLEAN_zetas[local_k];
-            printf("zeta: %d\n", zeta); 
-            // alla fine del ciclo più interno, j = start + len, 
-            // quindi, sostituendo nel ciclo precedente, 
-            // start = start + 2*len -> start += 2*len 
+        for (start = 0; start < 256; start = j + len) {
+            zeta = PQCLEAN_MLKEM768_CLEAN_zetas[k++];
             for (j = start; j < start + len; j++) {
-                int16_t t = fqmul(zeta, r[j + len]);
+                t = fqmul(zeta, r[j + len]);
                 r[j + len] = r[j] - t;
                 r[j] = r[j] + t;
             }
         }
     }
 }
+
+/*
+ * Tentativo di parallelizzazione della NTT tramite OpenMP.
+ *
+ * Sebbene ogni livello della NTT contenga blocchi indipendenti che possono
+ * essere assegnati a thread differenti, in pratica questa parallelizzazione
+ * tende a degradare le prestazioni per diversi motivi:
+ *
+ * 1) Dimensione ridotta del problema:
+ *    Kyber utilizza polinomi di soli 256 coefficienti (KYBER_N = 256).
+ *    Il lavoro svolto da una singola NTT è quindi molto limitato e spesso
+ *    insufficiente a compensare l'overhead introdotto dal runtime OpenMP.
+ *
+ * 2) Parallelismo limitato ai livelli superiori:
+ *    Nei primi livelli della trasformata il numero di blocchi è molto basso
+ *    (1, 2, 4, 8, ...). Di conseguenza molti thread rimangono inattivi,
+ *    causando scarso utilizzo delle risorse disponibili.
+ *
+ * 3) Costi di sincronizzazione:
+ *    Ogni livello richiede una barriera implicita al termine del ciclo
+ *    omp for per garantire che tutti i coefficienti siano stati aggiornati
+ *    prima di procedere al livello successivo. Le frequenti sincronizzazioni
+ *    introducono un overhead significativo rispetto al lavoro computazionale
+ *    effettivamente svolto.
+ *
+ * 4) Granularità troppo fine:
+ *    Le operazioni butterfly della NTT sono molto leggere e consistono in
+ *    poche operazioni aritmetiche. Il costo di gestione dei thread può quindi
+ *    superare il beneficio ottenuto dalla parallelizzazione.
+ *
+ * Per questi motivi la parallelizzazione della NTT in Kyber spesso produce
+ * speedup nulli o addirittura rallentamenti. Risulta generalmente più
+ * efficace parallelizzare batch indipendenti di operazioni KEM
+ * (key generation, encapsulation e decapsulation) tramite OpenMP e MPI,
+ * lasciando la NTT interna sequenziale.
+ */
+
+// void PQCLEAN_MLKEM768_CLEAN_ntt(int16_t r[256]) {
+//     unsigned int len, start, j;
+//     // k = 1;
+//     // lo zeta da usare nella versione sequenziale viene selezionato tramite k++;
+//     // tuttavia, se thread diversi operano su blocchi diversi -> race condition su k
+//     // ntt lavora a livelli -> 
+//     // livello 1, len = 128, zeta = zetas[1]; 
+//     // livello 2, len = 64, servono 2 coeff, zeta = zetas[2] e zetas[3] ecc
+//     // livello 3, servono 4 coeff che vanno da zetas[4] a zetas[7]
+//     // Notiamo che l'indice iniziale di ogni livello (che chiamiamo k_base) si trova sempre facendo 128/len.
+//     // dentro lo stesso livello, k aumenta di 1 ogni volta che si passa a un nuovo blocco -> start avanza di 2*len
+//     // quindi, blocchi superati = start/(2*len) -> k = k_base + start/(2*len) -> k = 128/len + start/(2*len)
+
+//     for (len = 128; len >= 2; len >>= 1) {
+//         unsigned int k_base = 128/len;
+//         #pragma omp parallelfor private(j, start) schedule(static)
+//         for (start = 0; start < 256; start += 2*len) {
+//             unsigned int local_k = k_base + (start/(2*len));
+//             int16_t zeta = PQCLEAN_MLKEM768_CLEAN_zetas[local_k]; 
+//             // alla fine del ciclo più interno, j = start + len, 
+//             // quindi, sostituendo nel ciclo precedente, 
+//             // start = start + 2*len -> start += 2*len 
+//             for (j = start; j < start + len; j++) {
+//                 int16_t t = fqmul(zeta, r[j + len]);
+//                 r[j + len] = r[j] - t;
+//                 r[j] = r[j] + t;
+//             }
+//         }
+//     }
+// }
 
 /*************************************************
 * Name:        invntt_tomont

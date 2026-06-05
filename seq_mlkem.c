@@ -3,7 +3,7 @@
 #include <string.h>
 #include <time.h> // Libreria standard C per il calcolo del tempo
 #include "api.h"
-#include <time.h>
+#include <omp.h>
 
 #define N_JOBS 100000
 // Definisco le costanti di successo e fallimento (seguendo la convenzione di PQClean)
@@ -52,9 +52,10 @@ int main(int argc, char *argv[]) {
     struct timespec start, end;
 
     int global_success = 0;
-    clock_t t0, t1;
-    t0 = clock();
+    struct timespec t0, t1;
+    timespec_get(&t0, TIME_UTC); // Prendo il tempo di inizio
     // Ciclo for lineare: un solo core processa tutti i job consecutivamente
+    // #pragma omp parallel for reduction(+:global_success) schedule(static)
     for (int i = 0; i < N_JOBS; i++) {
         kem_job job;
         
@@ -64,12 +65,15 @@ int main(int argc, char *argv[]) {
             global_success++;
         }
     }
-    t1 = clock();
+    timespec_get(&t1, TIME_UTC); // Prendo il tempo di fine
+    double secondi = (double)(t1.tv_sec - t0.tv_sec);
+    double nanosecondi = (double)(t1.tv_nsec - t0.tv_nsec) / 1000000000.0;
+    double elapsed_time = secondi + nanosecondi;
     // Stampa dei risultati
     printf("\n========== SEQUENTIAL EXECUTION COMPLETED ==========");
     printf("\nJobs requested:    %d", N_JOBS);
     printf("\nJobs succeded:    %d / %d", global_success, N_JOBS);
-    printf("\nTotal time:    %f sec", (double)(t1 - t0) / CLOCKS_PER_SEC);
+    printf("\nTotal time:    %f sec", elapsed_time);
     printf("\n====================================================\n");
     
     return 0;

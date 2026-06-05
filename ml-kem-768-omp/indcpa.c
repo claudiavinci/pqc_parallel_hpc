@@ -8,6 +8,7 @@
 #include <stddef.h>
 #include <stdint.h>
 #include <string.h>
+#include <omp.h>
 
 /*************************************************
 * Name:        pack_pk
@@ -157,10 +158,14 @@ static unsigned int rej_uniform(int16_t *r,
 void PQCLEAN_MLKEM768_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMBYTES], int transposed) {
     unsigned int ctr, i, j;
     unsigned int buflen;
-    uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];
-    xof_state state;
-
+    // uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];
+    // xof_state state;
+    #pragma omp parallel for private(ctr, j, buflen) schedule(static)
     for (i = 0; i < KYBER_K; i++) {
+        // 
+        uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];
+        xof_state state;
+        // 
         for (j = 0; j < KYBER_K; j++) {
             if (transposed) {
                 xof_absorb(&state, seed, (uint8_t)i, (uint8_t)j);
@@ -211,17 +216,27 @@ void PQCLEAN_MLKEM768_CLEAN_indcpa_keypair_derand(uint8_t pk[KYBER_INDCPA_PUBLIC
 
     gen_a(a, publicseed);
 
+    // for (i = 0; i < KYBER_K; i++) {
+    //     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(&skpv.vec[i], noiseseed, nonce++);
+    // }
+    // for (i = 0; i < KYBER_K; i++) {
+    //     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(&e.vec[i], noiseseed, nonce++);
+    // }
+    
+    #pragma omp parallel for 
     for (i = 0; i < KYBER_K; i++) {
-        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(&skpv.vec[i], noiseseed, nonce++);
+        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(&skpv.vec[i], noiseseed, (uint8_t)i);
     }
+    #pragma omp parallel for 
     for (i = 0; i < KYBER_K; i++) {
-        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(&e.vec[i], noiseseed, nonce++);
+        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(&e.vec[i], noiseseed, (uint8_t)(i + KYBER_K));
     }
 
     PQCLEAN_MLKEM768_CLEAN_polyvec_ntt(&skpv);
     PQCLEAN_MLKEM768_CLEAN_polyvec_ntt(&e);
 
     // matrix-vector multiplication
+    #pragma omp parallel for
     for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery(&pkpv.vec[i], &a[i], &skpv);
         PQCLEAN_MLKEM768_CLEAN_poly_tomont(&pkpv.vec[i]);
@@ -265,17 +280,29 @@ void PQCLEAN_MLKEM768_CLEAN_indcpa_enc(uint8_t c[KYBER_INDCPA_BYTES],
     PQCLEAN_MLKEM768_CLEAN_poly_frommsg(&k, m);
     gen_at(at, seed);
 
+    // for (i = 0; i < KYBER_K; i++) {
+    //     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(sp.vec + i, coins, nonce++);
+    // }
+    // for (i = 0; i < KYBER_K; i++) {
+    //     PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2(ep.vec + i, coins, nonce++);
+    // }
+    #pragma omp parallel for
     for (i = 0; i < KYBER_K; i++) {
-        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(sp.vec + i, coins, nonce++);
+        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta1(sp.vec + i, coins, (uint8_t)i);
     }
+    #pragma omp parallel for
     for (i = 0; i < KYBER_K; i++) {
-        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2(ep.vec + i, coins, nonce++);
+        PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2(ep.vec + i, coins, (uint8_t)(i + KYBER_K));
     }
-    PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2(&epp, coins, nonce++);
+
+    // PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2(&epp, coins, nonce++);
+    PQCLEAN_MLKEM768_CLEAN_poly_getnoise_eta2(&epp, coins, (uint8_t)(2 * KYBER_K));
+
 
     PQCLEAN_MLKEM768_CLEAN_polyvec_ntt(&sp);
 
     // matrix-vector multiplication
+    #pragma omp parallel for
     for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_MLKEM768_CLEAN_polyvec_basemul_acc_montgomery(&b.vec[i], &at[i], &sp);
     }
