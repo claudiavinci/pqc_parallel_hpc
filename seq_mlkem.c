@@ -1,8 +1,5 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
+#include "common.h"
 #include <time.h> // Libreria standard C per il calcolo del tempo
-#include "api.h"
 #include "report.h"
 
 #ifdef _OPENMP
@@ -13,19 +10,6 @@
     #define N_THREADS 1
     #define OMP_ENABLED 0
 #endif
-
-#define N_JOBS 100000
-// Definisco le costanti di successo e fallimento (seguendo la convenzione di PQClean)
-#define KEM_FAIL 1
-#define KEM_SUCCESS 0
-
-typedef struct {
-    uint8_t pk[PQCLEAN_MLKEM768_CLEAN_CRYPTO_PUBLICKEYBYTES];
-    uint8_t sk[PQCLEAN_MLKEM768_CLEAN_CRYPTO_SECRETKEYBYTES];
-    uint8_t ct[PQCLEAN_MLKEM768_CLEAN_CRYPTO_CIPHERTEXTBYTES];
-    uint8_t ss_enc[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
-    uint8_t ss_dec[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
-} kem_job;
 
 int run_kem_job(kem_job *job) {
     if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair(job->pk, job->sk) != 0) {

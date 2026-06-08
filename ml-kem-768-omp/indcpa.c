@@ -160,7 +160,7 @@ void PQCLEAN_MLKEM768_CLEAN_gen_matrix(polyvec *a, const uint8_t seed[KYBER_SYMB
     unsigned int buflen;
     // uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];
     // xof_state state;
-    #pragma omp parallel for private(ctr, j, buflen) schedule(static)
+    #pragma omp parallel for private(ctr, j, buflen) schedule(static) 
     for (i = 0; i < KYBER_K; i++) {
         // 
         uint8_t buf[GEN_MATRIX_NBLOCKS * XOF_BLOCKBYTES];

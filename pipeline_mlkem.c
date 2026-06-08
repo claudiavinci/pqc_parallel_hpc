@@ -1,39 +1,10 @@
-#include <stdio.h>
-#include <stdint.h>
-#include <string.h>
+#include "common.h"
 #include <time.h>
-#include <omp.h>
-#include "api.h"
 #include "report.h"
+#include <omp.h>
 
-#ifdef _OPENMP
-    #include <omp.h>
-    #define N_THREADS omp_get_max_threads()
-    #define OMP_ENABLED 1
-#else
-    #define N_THREADS 1
-    #define OMP_ENABLED 0
-#endif
-
-#define N_JOBS 100000
-// Definisco le costanti di successo e fallimento (seguendo la convenzione di PQClean)
-#define KEM_FAIL 1
-#define KEM_SUCCESS 0
-
-/*
-Kem job struct: contains all the necessary data for a single KEM operation, including: 
-- key generation, 
-- encapsulation,
-- decapsulation 
-*/
-typedef struct {
-    uint8_t pk[PQCLEAN_MLKEM768_CLEAN_CRYPTO_PUBLICKEYBYTES];
-    uint8_t sk[PQCLEAN_MLKEM768_CLEAN_CRYPTO_SECRETKEYBYTES];
-    uint8_t ct[PQCLEAN_MLKEM768_CLEAN_CRYPTO_CIPHERTEXTBYTES];
-    uint8_t ss_enc[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
-    uint8_t ss_dec[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
-    int status;
-} kem_job;
+#define N_THREADS omp_get_max_threads()
+#define OMP_ENABLED 1
 
 // Pipeline stages definition
 static inline int keygen_stage(kem_job *job){
