@@ -112,7 +112,7 @@ void PQCLEAN_MLKEM768_CLEAN_polyvec_frombytes(polyvec *r, const uint8_t a[KYBER_
 **************************************************/
 void PQCLEAN_MLKEM768_CLEAN_polyvec_ntt(polyvec *r) {
     unsigned int i;
-    #pragma omp parallel for
+    // #pragma omp parallel for         TOLTO DA POLYVEC PERCHE' PEGGIORAVA LE PRESTAZIONI
     for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_MLKEM768_CLEAN_poly_ntt(&r->vec[i]);
     }
@@ -128,7 +128,7 @@ void PQCLEAN_MLKEM768_CLEAN_polyvec_ntt(polyvec *r) {
 **************************************************/
 void PQCLEAN_MLKEM768_CLEAN_polyvec_invntt_tomont(polyvec *r) {
     unsigned int i;
-    #pragma omp parallel for
+    // #pragma omp parallel for
     for (i = 0; i < KYBER_K; i++) {
         PQCLEAN_MLKEM768_CLEAN_poly_invntt_tomont(&r->vec[i]);
     }

@@ -4,6 +4,16 @@
 #include <time.h>
 #include <omp.h>
 #include "api.h"
+#include "report.h"
+
+#ifdef _OPENMP
+    #include <omp.h>
+    #define N_THREADS omp_get_max_threads()
+    #define OMP_ENABLED 1
+#else
+    #define N_THREADS 1
+    #define OMP_ENABLED 0
+#endif
 
 #define N_JOBS 100000
 // Definisco le costanti di successo e fallimento (seguendo la convenzione di PQClean)
@@ -108,11 +118,9 @@ int main(int argc, char *argv[]) {
 
     timespec_get(&t1, TIME_UTC); // Prendo il tempo di fine
     double elapsed_time = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
+    // Stampa dei risultati
+    write_report("reports", "pipeline_mlkem_results.csv", OMP_ENABLED, N_THREADS, N_JOBS, global_success, elapsed_time);
     printf("\n=== PIPELINE EXECUTION COMPLETED===\n");
-    printf("Jobs: %d\n", N_JOBS);
-    printf("Success: %d / %d \n", global_success, N_JOBS);
-    printf("Total time: %f sec\n", elapsed_time);
-    printf("=====================================\n");
 
     return 0;
 }

@@ -3,7 +3,16 @@
 #include <string.h>
 #include <time.h> // Libreria standard C per il calcolo del tempo
 #include "api.h"
-#include <omp.h>
+#include "report.h"
+
+#ifdef _OPENMP
+    #include <omp.h>
+    #define N_THREADS omp_get_max_threads()
+    #define OMP_ENABLED 1
+#else
+    #define N_THREADS 1
+    #define OMP_ENABLED 0
+#endif
 
 #define N_JOBS 100000
 // Definisco le costanti di successo e fallimento (seguendo la convenzione di PQClean)
@@ -69,12 +78,11 @@ int main(int argc, char *argv[]) {
     double secondi = (double)(t1.tv_sec - t0.tv_sec);
     double nanosecondi = (double)(t1.tv_nsec - t0.tv_nsec) / 1000000000.0;
     double elapsed_time = secondi + nanosecondi;
-    // Stampa dei risultati
-    printf("\n========== SEQUENTIAL EXECUTION COMPLETED ==========");
-    printf("\nJobs requested:    %d", N_JOBS);
-    printf("\nJobs succeded:    %d / %d", global_success, N_JOBS);
-    printf("\nTotal time:    %f sec", elapsed_time);
-    printf("\n====================================================\n");
     
+    // Stampa dei risultati
+
+    write_report("reports", "seq_mlkem_results.csv", OMP_ENABLED, N_THREADS, N_JOBS, global_success, elapsed_time);
+
+    printf("========== SEQUENTIAL EXECUTION COMPLETED ==========\n");
     return 0;
 }
