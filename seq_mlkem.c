@@ -1,6 +1,7 @@
 #include "common.h"
 #include <time.h> // Libreria standard C per il calcolo del tempo
 #include "report.h"
+#include <string.h>
 
 #ifdef _OPENMP
     #include <omp.h>

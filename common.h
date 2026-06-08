@@ -3,7 +3,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <string.h>
 #include "api.h"
 
 #define N_JOBS 100000

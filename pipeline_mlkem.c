@@ -2,6 +2,7 @@
 #include <time.h>
 #include "report.h"
 #include <omp.h>
+#include <string.h>
 
 #define N_THREADS omp_get_max_threads()
 #define OMP_ENABLED 1
