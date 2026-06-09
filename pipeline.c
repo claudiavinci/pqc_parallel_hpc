@@ -69,7 +69,7 @@ void run_pipeline_omp(kem_job *jobs, int *global_success){
                             printf("Shared secrets do not match for job %d. Test failed.\n", i);
                         } else {
                             #pragma omp atomic
-                            global_success++;
+                            (*global_success)++;
                         }
                     }
                 }
