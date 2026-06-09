@@ -21,16 +21,16 @@ static inline int check_stage(kem_job *job){
     return memcmp(job->ss_enc, job->ss_dec, PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES) == 0;
 }
 
-void run_pipeline_omp(kem_job *jobs, int *global_success){
+void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job){
     #pragma omp parallel
     {
         #pragma omp single
         {
-            for(int i=0; i < N_JOBS; i++){
+            for(int i=start_job; i < end_job; i++){
                 jobs[i].status = KEM_SUCCESS;
 
                 // ---------- KEYGEN STAGE ----------
-                #pragma omp task depend(out: jobs[i].pk, jobs[i].sk)
+                #pragma omp task firstprivate(i) depend(out: jobs[i].pk, jobs[i].sk)
                 {
                     if (keygen_stage(&jobs[i]) != KEM_SUCCESS){
                         jobs[i].status = KEM_FAIL;
@@ -39,7 +39,7 @@ void run_pipeline_omp(kem_job *jobs, int *global_success){
                 }
 
                 // ---------- ENCAPSULATION STAGE ----------
-                #pragma omp task depend(in: jobs[i].pk, jobs[i].sk) depend(out: jobs[i].ct, jobs[i].ss_enc)
+                #pragma omp task firstprivate(i) depend(in: jobs[i].pk, jobs[i].sk) depend(out: jobs[i].ct, jobs[i].ss_enc)
                 {
                     if (jobs[i].status == KEM_SUCCESS) {
                         if (enc_stage(&jobs[i]) != KEM_SUCCESS){
@@ -50,7 +50,7 @@ void run_pipeline_omp(kem_job *jobs, int *global_success){
                 }
 
                 // ---------- DECAPSULATION STAGE ----------
-                #pragma omp task depend(in: jobs[i].ct, jobs[i].sk) depend(out: jobs[i].ss_dec)
+                #pragma omp task firstprivate(i) depend(in: jobs[i].ct, jobs[i].sk) depend(out: jobs[i].ss_dec)
                 {
                     if (jobs[i].status == KEM_SUCCESS) {
                         if (dec_stage(&jobs[i]) != KEM_SUCCESS){
@@ -61,7 +61,7 @@ void run_pipeline_omp(kem_job *jobs, int *global_success){
                 }
 
                 // ---------- CHECK STAGE ----------
-                #pragma omp task depend(in: jobs[i].ss_enc, jobs[i].ss_dec)
+                #pragma omp task firstprivate(i) depend(in: jobs[i].ss_enc, jobs[i].ss_dec)
                 {
                     if (jobs[i].status == KEM_SUCCESS){
                         if (!check_stage(&jobs[i])){
@@ -69,7 +69,7 @@ void run_pipeline_omp(kem_job *jobs, int *global_success){
                             printf("Shared secrets do not match for job %d. Test failed.\n", i);
                         } else {
                             #pragma omp atomic
-                            (*global_success)++;
+                            (*success)++;
                         }
                     }
                 }

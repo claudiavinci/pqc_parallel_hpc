@@ -60,13 +60,11 @@ int main(int argc, char *argv[]) {
         }
     }
     timespec_get(&t1, TIME_UTC); // Prendo il tempo di fine
-    double secondi = (double)(t1.tv_sec - t0.tv_sec);
-    double nanosecondi = (double)(t1.tv_nsec - t0.tv_nsec) / 1000000000.0;
-    double elapsed_time = secondi + nanosecondi;
+    double elapsed_time = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
     
     // Stampa dei risultati
 
-    write_report("reports", "seq_mlkem_results.csv", OMP_ENABLED, N_THREADS, N_JOBS, global_success, elapsed_time);
+    write_report("reports", "seq_mlkem_results.csv", OMP_ENABLED, 1, N_THREADS, N_JOBS, global_success, elapsed_time);
 
     printf("========== SEQUENTIAL EXECUTION COMPLETED ==========\n");
     return 0;

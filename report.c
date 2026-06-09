@@ -3,7 +3,7 @@
 #include <string.h>
 #include "report.h"
 
-void write_report(const char* dir, const char* filename, int omp_enabled, int n_threads, int n_jobs, int success, double time_sec) {
+void write_report(const char* dir, const char* filename, int omp_enabled, int nodes, int n_threads, int n_jobs, int success, double time_sec) {
     char path[256];
     snprintf(path, sizeof(path), "%s/%s", dir, filename);
     FILE *fp = fopen(path, "a"); // Apro il file in modalità append
@@ -13,10 +13,11 @@ void write_report(const char* dir, const char* filename, int omp_enabled, int n_
     }
     fseek(fp, 0, SEEK_END); // Sposto il puntatore alla fine del file
     if (ftell(fp) == 0) { // Se il file è vuoto, scrivo l'intestazione
-       fprintf(fp, "OMP_ENABLED,N_THREADS,N_JOBS,SUCCESS,FAIL,TIME_SEC,THROUGHPUT_JS\n");
+       fprintf(fp, "OMP_ENABLED,N_NODES,N_THREADS,N_JOBS,SUCCESS,FAIL,TIME_SEC,THROUGHPUT_JS\n");
     }
-    fprintf(fp, "%d,%d,%d,%d,%d,%f,%f\n", 
+    fprintf(fp, "%d,%d,%d,%d,%d,%d,%f,%f\n", 
         omp_enabled,
+        nodes,
         n_threads,
         n_jobs,
         success,
