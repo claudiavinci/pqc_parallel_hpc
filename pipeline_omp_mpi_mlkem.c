@@ -17,6 +17,14 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+    char hostname[MPI_MAX_PROCESSOR_NAME];
+    int len;
+
+    MPI_Get_processor_name(hostname, &len);
+
+    printf("Rank %d/%d running on %s\n", rank, size, hostname);
+    fflush(stdout);
+
     int global_success = 0;
     int local_success = 0;
 
