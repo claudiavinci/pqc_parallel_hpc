@@ -17,6 +17,8 @@ int main(int argc, char *argv[]) {
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
 
+    int n_nodes = (argc > 1) ? atoi(argv[1]) : 1;
+
     char hostname[MPI_MAX_PROCESSOR_NAME];
     int len;
 
@@ -56,9 +58,11 @@ int main(int argc, char *argv[]) {
                      OMP_ENABLED,
                      size,
                      N_THREADS,
+                     n_nodes,
                      N_JOBS,
                      global_success,
-                     global_elapsed);
+                     global_elapsed
+                    );
 
         printf("\n=== PIPELINE OMP+MPI EXECUTION COMPLETED ===\n");
     }
