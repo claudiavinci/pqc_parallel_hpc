@@ -3,6 +3,9 @@
 #include "report.h"
 #include <string.h>
 
+#define NODES 1
+#define MPI_RANKS 1
+
 #ifdef _OPENMP
     #include <omp.h>
     #define N_THREADS omp_get_max_threads()
@@ -40,7 +43,7 @@ int run_kem_job(kem_job *job) {
 }
 
 int main(int argc, char *argv[]) {
-    printf("Sequential execution starting...\n");
+    printf("\nSequential execution starting...\n");
 
     // Funzione standard C per prendere il tempo ad alta risoluzione (Monotonic clock)
     struct timespec start, end;
@@ -64,7 +67,7 @@ int main(int argc, char *argv[]) {
     
     // Stampa dei risultati
 
-    write_report("reports", "seq_mlkem_results.csv", OMP_ENABLED, 1, N_THREADS, 1, N_JOBS, global_success, elapsed_time);
+    write_report("reports", "seq_mlkem_results.csv", OMP_ENABLED, MPI_RANKS, N_THREADS, NODES, N_JOBS, global_success, elapsed_time);
 
     printf("========== SEQUENTIAL EXECUTION COMPLETED ==========\n");
     return 0;

@@ -9,7 +9,7 @@
 #define OMP_ENABLED 1
 
 int main(int argc, char *argv[]) {
-    printf("Pipeline omp+mpi execution starting...\n");
+    printf("\nPipeline omp+mpi execution starting...\n");
 
     MPI_Init(&argc, &argv);
     
