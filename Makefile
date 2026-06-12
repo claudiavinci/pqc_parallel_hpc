@@ -10,25 +10,25 @@ INC_SEQ=-I ml-kem-768
 INC_OMP=-I ml-kem-768-omp
 
 # --------- BINARI ---------------
-SEQ=seq_mlkem
-SEQ_OMP=seq_mlkem_omp
-PIPE_OMP=pipeline_omp_mlkem
-PIPE_OMP_MPI=pipeline_omp_mpi_mlkem
+SEQ=sequential_jobs/seq_mlkem
+SEQ_OMP=sequential_jobs/seq_mlkem_omp
+PIPE_OMP=pipeline/pipeline_omp_mlkem
+PIPE_OMP_MPI=pipeline/pipeline_omp_mpi_mlkem
 
 # --------- BUILD ----------------
 all: seq seq_omp pipe_omp pipe_omp_mpi
 
 seq:
-	$(CC) $(CFLAGS) seq_mlkem.c report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) -o $(SEQ)
+	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) -o $(SEQ)
 
 seq_omp:
-	$(CC) $(CFLAGS) $(OMPFLAGS) seq_mlkem.c report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(SEQ_OMP)
+	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(SEQ_OMP)
 
 pipe_omp:
-	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline_omp_mlkem.c report.c pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE_OMP)
+	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_omp_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE_OMP)
 
 pipe_omp_mpi:
-	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline_omp_mlkem.c report.c pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE_OMP_MPI)
+	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_omp_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE_OMP_MPI)
 
 # -------------- RUN SEQUENTIAL ----------
 

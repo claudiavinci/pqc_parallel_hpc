@@ -10,6 +10,7 @@
 // Definisco le costanti di successo e fallimento (seguendo la convenzione di PQClean)
 #define KEM_FAIL 1
 #define KEM_SUCCESS 0
+#define REPORT_PATH "report_out"
 
 typedef struct {
     uint8_t pk[PQCLEAN_MLKEM768_CLEAN_CRYPTO_PUBLICKEYBYTES];

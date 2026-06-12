@@ -1,5 +1,5 @@
-#include "common.h"
-#include "report.h"
+#include "../common.h"
+#include "../report/report.h"
 #include <omp.h>
 #include <string.h>
 #include "pipeline.h"
@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     MPI_Reduce(&local_success, &global_success, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
     
     if (rank == 0){
-        write_report("reports",
+        write_report(REPORT_PATH,
                      "pipeline_omp_mpi_results.csv",
                      OMP_ENABLED,
                      size,
