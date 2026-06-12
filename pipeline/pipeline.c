@@ -1,6 +1,6 @@
 #include "pipeline.h"
 #include "api.h"
-#include "common.h"
+#include "../common.h"
 #include <omp.h>
 #include <string.h>
 
