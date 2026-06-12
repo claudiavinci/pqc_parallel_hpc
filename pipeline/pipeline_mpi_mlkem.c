@@ -54,7 +54,7 @@ int main(int argc, char *argv[]) {
     
     if (rank == 0){
         write_report(REPORT_PATH,
-                     "pipeline_omp_mpi_results.csv",
+                     "pipeline_mpi_results.csv",
                      OMP_ENABLED,
                      size,
                      N_THREADS,

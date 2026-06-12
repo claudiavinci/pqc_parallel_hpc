@@ -24,7 +24,7 @@ int main(int argc, char *argv[]) {
     timespec_get(&t1, TIME_UTC); // Prendo il tempo di fine
     double elapsed_time = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
     // Stampa dei risultati
-    write_report(REPORT_PATH, "pipeline_omp_results.csv", OMP_ENABLED, MPI_RANKS, N_THREADS, NODES, N_JOBS, global_success, elapsed_time);
+    write_report(REPORT_PATH, "pipeline_results.csv", OMP_ENABLED, MPI_RANKS, N_THREADS, NODES, N_JOBS, global_success, elapsed_time);
     printf("\n=== PIPELINE EXECUTION COMPLETED===\n");
 
     return 0;
