@@ -11,7 +11,7 @@
 #define MPI_RANKS 1
 
 int main(int argc, char *argv[]) {
-    printf("\nPipeline execution starting...\n");
+    printf("\nPipeline execution starting...");
 
     int global_success = 0;
     struct timespec t0, t1;

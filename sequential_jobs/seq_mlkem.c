@@ -44,7 +44,7 @@ int run_kem_job(kem_job *job) {
 }
 
 int main(int argc, char *argv[]) {
-    printf("\nSequential execution starting...\n");
+    printf("\nSequential execution starting...");
 
     // Funzione standard C per prendere il tempo ad alta risoluzione (Monotonic clock)
     struct timespec start, end;
@@ -70,6 +70,6 @@ int main(int argc, char *argv[]) {
 
     write_report(REPORT_PATH, "seq_mlkem_results.csv", OMP_ENABLED, MPI_RANKS, N_THREADS, NODES, N_JOBS, global_success, elapsed_time);
 
-    printf("========== SEQUENTIAL EXECUTION COMPLETED ==========\n");
+    printf("\n========== SEQUENTIAL EXECUTION COMPLETED ==========\n");
     return 0;
 }

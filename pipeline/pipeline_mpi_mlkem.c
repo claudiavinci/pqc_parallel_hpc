@@ -9,7 +9,6 @@
 #define OMP_ENABLED 1
 
 int main(int argc, char *argv[]) {
-    printf("\nPipeline omp+mpi execution starting...\n");
 
     MPI_Init(&argc, &argv);
     
@@ -23,8 +22,7 @@ int main(int argc, char *argv[]) {
     int len;
 
     MPI_Get_processor_name(hostname, &len);
-
-    printf("Rank %d/%d running on %s\n", rank, size, hostname);
+    printf("\nPipeline omp+mpi execution starting on Rank %d/%d running on %s", rank, size, hostname);
     fflush(stdout);
 
     int global_success = 0;
