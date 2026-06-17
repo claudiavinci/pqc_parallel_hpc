@@ -51,14 +51,21 @@ run_pipe:
 	done
 
 run_mpi_local:
-	for i in $$(seq 1 20); do \
+# 	for i in $$(seq 1 20); do \
 		OMP_NUM_THREADS=$(THREADS) mpirun -np $(NP) ./$(PIPE_MPI); \
+# 	done
+
+	for i in $$(seq 1 20); do \
+    	mpiexec -n $(NP) \
+        	-env OMP_NUM_THREADS $(THREADS) \
+           	./$(PIPE_MPI); \
 	done
 
 run_mpi_cluster:
-	for i in $$(seq 1 20); do \
-		mpirun -np $(NP) --hostfile $(HOSTFILE) -xOMP_NUM_THREADS=$(THREADS) ./$(PIPE_MPI) $(NODES); \
-	done
+# 	for i in $$(seq 1 1); do \
+		mpirun -np $(NP) --hostfile $(HOSTFILE) -x OMP_NUM_THREADS=$(THREADS) ./$(PIPE_MPI) $(NODES); \
+#  	done
+	mpiexec -f $(HOSTFILE) -n $(NP) -env OMP_NUM_THREADS $(THREADS) ./$(PIPE_MPI) $(NODES)
 
 clean:
 	rm -f $(SEQ) $(SEQ_OMP) $(PIPE) $(PIPE_MPI)
