@@ -3,13 +3,14 @@
         {
             "name": "Linux",
             "includePath": [
-                "${workspaceFolder}/**"
-                // ,
+                "${workspaceFolder}/**",
+                "/usr/include/x86_64-linux-gnu/mpich"
                 // "/usr/lib/x86_64-linux-gnu/openmpi/include",
                 // "/usr/lib/x86_64-linux-gnu/openmpi/include/openmpi"
             ],
             "defines": [],
-            "compilerPath": "/usr/bin/gcc",
+            // "compilerPath": "/usr/bin/gcc",
+            "compilerPath": "/usr/bin/mpicc",
             "cStandard": "c17",
             "cppStandard": "gnu++14",
             "intelliSenseMode": "linux-gcc-x64"
