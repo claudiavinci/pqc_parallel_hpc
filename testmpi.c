@@ -6,7 +6,9 @@ int main(int argc, char **argv)
     printf("before init\n");
     fflush(stdout);
 
-    MPI_Init(&argc, &argv);
+    int err = MPI_Init(&argc, &argv);
+    printf("MPI_Init returned %d\n", err);
+    fflush(stdout);
 
     int rank;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
