@@ -62,9 +62,9 @@ run_mpi_local:
 	done
 
 run_mpi_cluster:
- 	for i in $$(seq 1 20); do \
+	for i in $$(seq 1 20); do \
 		mpiexec -f $(HOSTFILE) -n $(NP) -env OMP_NUM_THREADS $(THREADS) ./$(PIPE_MPI) $(NODES); \
-  	done
+	done
 
 clean:
 	rm -f $(SEQ) $(SEQ_OMP) $(PIPE) $(PIPE_MPI)
