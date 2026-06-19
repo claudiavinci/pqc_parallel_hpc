@@ -9,11 +9,17 @@
 #define OMP_ENABLED 1
 
 int main(int argc, char *argv[]) {
-
+    int provided;
+    int requested = MPI_THREAD_FUNNELED;
     printf("START MAIN\n");
     fflush(stdout);
 
-    MPI_Init(&argc, &argv);
+    MPI_Init_thread(&argc, &argv, requested, &provided);
+
+    if (provided < requested) {
+        printf("MPI does not provide required threading level\n");
+        MPI_Abort(MPI_COMM_WORLD, 1);
+    }
     
     printf("AFTER MPI_INIT\n");
     fflush(stdout);
