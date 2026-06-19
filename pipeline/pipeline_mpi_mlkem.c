@@ -11,8 +11,6 @@
 int main(int argc, char *argv[]) {
     int provided;
     int requested = MPI_THREAD_FUNNELED;
-    printf("START MAIN\n");
-    fflush(stdout);
 
     MPI_Init_thread(&argc, &argv, requested, &provided);
 
@@ -21,9 +19,6 @@ int main(int argc, char *argv[]) {
         MPI_Abort(MPI_COMM_WORLD, 1);
     }
     
-    printf("AFTER MPI_INIT\n");
-    fflush(stdout);
-
     int rank, size;
     MPI_Comm_rank(MPI_COMM_WORLD, &rank);
     MPI_Comm_size(MPI_COMM_WORLD, &size);
@@ -34,7 +29,7 @@ int main(int argc, char *argv[]) {
     int len;
 
     MPI_Get_processor_name(hostname, &len);
-    printf("\nPipeline omp+mpi execution starting on Rank %d/%d running on %s", rank, size, hostname);
+    printf("\nPipeline omp+mpi execution starting on Rank %d/%d running on %s\n", rank, size, hostname);
     fflush(stdout);
 
     int global_success = 0;
