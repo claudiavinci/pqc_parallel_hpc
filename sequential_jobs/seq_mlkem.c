@@ -44,13 +44,12 @@ int run_kem_job(kem_job *job) {
 }
 
 int main(int argc, char *argv[]) {
-    printf("\nSequential execution starting...");
-
     // Funzione standard C per prendere il tempo ad alta risoluzione (Monotonic clock)
     struct timespec start, end;
 
     int global_success = 0;
     struct timespec t0, t1;
+    printf("\nSequential execution starting...");
     timespec_get(&t0, TIME_UTC); // Prendo il tempo di inizio
     // Ciclo for lineare: un solo core processa tutti i job consecutivamente
     // #pragma omp parallel for reduction(+:global_success) schedule(static)
