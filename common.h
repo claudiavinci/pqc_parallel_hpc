@@ -5,7 +5,7 @@
 #include <stdint.h>
 #include <stdlib.h>
 #include "api.h"
-
+// 
 #define N_JOBS 50000
 // Definisco le costanti di successo e fallimento (seguendo la convenzione di PQClean)
 #define KEM_FAIL 1
