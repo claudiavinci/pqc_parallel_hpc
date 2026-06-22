@@ -98,22 +98,53 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
     plt.savefig(savepath)
     plt.close()
 
-def plot_heatmap(df, metric, title, figname):
+def plot_heatmap(df, title, figname):
 
-    pivot = df.pivot_table(
+    speedup_pivot = df.pivot_table(
         index = "MPI_RANKS",
         columns = "OMP_THREADS",
-        values = metric
+        values = "SPEEDUP"
+    ).sort_index().sort_index(axis=1)
+
+    eff_pivot = df.pivot_table(
+        index = "MPI_RANKS",
+        columns = "OMP_THREADS",
+        values = "EFFICIENCY"
+    ).sort_index().sort_index(axis=1)
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
+
+    sns.heatmap(
+        speedup_pivot,
+        annot=True,
+        fmt=".3f",
+        cmap="viridis",
+        linewidths=1,
+        linecolor="white",
+        cbar_kws={"label": "Speedup"},
+        annot_kws={"size": 11},
+        ax=ax1
     )
+    ax1.set_title("Speedup")
+    ax1.set_xlabel("OMP Threads")
+    ax1.set_ylabel("MPI Ranks")
 
-    pivot = pivot.sort_index().sort_index(axis=1)
+    sns.heatmap(
+    eff_pivot,
+        annot=True,
+        fmt=".3f",
+        cmap="viridis",
+        linewidths=1,
+        linecolor="white",
+        cbar_kws={"label": "Efficiency"},
+        annot_kws={"size": 11},
+        ax=ax2
+    )
+    ax2.set_title("Efficiency")
+    ax2.set_xlabel("OMP Threads")
+    ax2.set_ylabel("MPI Ranks")
 
-    plt.figure()
-    sns.heatmap(pivot, annot=True, fmt=".3f", cmap="viridis", cbar_kws={"label": metric.capitalize()})
-    plt.title(title)
-    # heatmap di speedup ed efficienza vicine con titolo comune
-    plt.xlabel("OMP Threads")
-    plt.ylabel("MPI Ranks")
+    fig.suptitle(title, fontsize=18)
     plt.tight_layout()
     plt.savefig(f"{PLOT_DIR}{figname}")
     plt.close()
@@ -214,11 +245,13 @@ if __name__ == "__main__":
     
     # # -------------- MPI + OPENMP HEATMAP ------------------------
     
-    plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup Heatmap (1 node)" ,"heatmap_speedup_local.png")
-    plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency Heatmap (1 node)" ,"heatmap_eff_local.png")
-    plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup Heatmap (2 nodes)" ,"heatmap_speedup_cluster.png")
-    plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency Heatmap (2 nodes)" ,"heatmap_eff_cluster.png")
+    # plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup Heatmap (1 node)" ,"heatmap_speedup_local.png")
+    # plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency Heatmap (1 node)" ,"heatmap_eff_local.png")
+    # plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup Heatmap (2 nodes)" ,"heatmap_speedup_cluster.png")
+    # plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency Heatmap (2 nodes)" ,"heatmap_eff_cluster.png")
 
+    plot_heatmap(pipe_mpi_mean, "MPI+OMP Performance Heatmaps (1 node)" ,"heatmaps_local.png")
+    plot_heatmap(pipe_mpi_cluster_mean, "MPI+OMP Performance Heatmaps (2 nodes)" ,"heatmaps_cluster.png")
 
     # # pipe_mpi_fixed = pipe_mpi_mean[pipe_mpi_mean["OMP_THREADS"] == 3].copy()
 
