@@ -1,2 +1,2 @@
-192.168.1.103
-andrea_casa
+claudia_lan
+andrea_wifi_claudia
