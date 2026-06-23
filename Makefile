@@ -73,7 +73,7 @@ run_mpi_local:
 
 run_all_mpi_local: 
 # np >= 2, e np x omp <= 8 + oversubscription
-	@for cfg in "2 2" "2 3" "2 4" "3 2" "3 3" "4 2" "4 4"; do \
+	@for cfg in "2 2" "2 3" "2 4" "3 2" "3 3" "3 4" "4 2" "4 3" "4 4"; do \
 		set -- $$cfg; \
 		np=$$1; \
 		omp=$$2; \
@@ -91,7 +91,7 @@ run_mpi_cluster:
 
 run_all_mpi_cluster:
 # np >= 2, e np x omp <= 16 + oversubscription
-	@for cfg in "2 2" "2 3" "2 4" "2 8" "3 2" "3 3" "3 4" "4 2" "4 3" "4 4" "4 8" "8 2" "8 4"; do \
+	@for cfg in "2 2" "2 3" "2 4" "2 8" "3 2" "3 3" "3 4" "3 8" "4 2" "4 3" "4 4" "4 8" "8 2" "8 3" "8 4" "8 8"; do \
 		set -- $$cfg; \
 		np=$$1; \
 		omp=$$2; \

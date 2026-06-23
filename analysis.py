@@ -145,32 +145,32 @@ def plot_heatmap(df, metric, title, figname):
     ax.set_ylabel("MPI Ranks")
 
     plt.tight_layout()
-    plt.savefig(f"{PLOT_DIR}{figname}")
+    plt.savefig(f"{PLOT_DIR}/{figname}")
     plt.close()
 
 
-def plot_iso_omp(df, coly, title, savepath):
+def plot_iso_mpi(df, coly, title, figname):
 
     plt.figure()
 
-    for omp in sorted(df["OMP_THREADS"].unique()):
-        sub = df[df["OMP_THREADS"] == omp].sort_values("MPI_RANKS")
+    for rank in sorted(df["MPI_RANKS"].unique()):
+        sub = df[df["MPI_RANKS"] == rank].sort_values("OMP_THREADS")
 
         plt.plot(
-            sub["MPI_RANKS"],
+            sub["OMP_THREADS"],
             sub[coly],
             marker="o",
-            label=f"OMP={omp}"
+            label=f"MPI Ranks={rank}"
         )
 
-    plt.xticks(sorted(df["MPI_RANKS"].unique()))
+    plt.xticks(sorted(df["OMP_THREADS"].unique()))
     plt.title(title)
-    plt.xlabel("MPI Ranks")
+    plt.xlabel("OMP Threads")
     plt.ylabel(coly)
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(savepath)
+    plt.savefig(f"{PLOT_DIR}/{figname}")
     plt.close()
 
 if __name__ == "__main__":
@@ -255,8 +255,16 @@ if __name__ == "__main__":
     plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency (1 node)", "heatmap_eff_local.png")
     plot_heatmap(pipe_mpi_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (1 node)", "heatmap_through_local.png")
 
-    plot_iso_omp(pipe_mpi_mean, "SPEEDUP", "OMP+MPI Speedup (1 node)", f"{PLOT_DIR}/speedup_mpi_local.png")
-    plot_iso_omp(pipe_mpi_mean, "EFFICIENCY", "OMP+MPI Efficiency (1 node)", f"{PLOT_DIR}/eff_mpi_local.png")
-    plot_iso_omp(pipe_mpi_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (1 node)", f"{PLOT_DIR}/through_mpi_local.png")
+    plot_iso_mpi(pipe_mpi_mean, "SPEEDUP", "OMP+MPI Speedup (1 node)", "speedup_mpi_local.png")
+    plot_iso_mpi(pipe_mpi_mean, "EFFICIENCY", "OMP+MPI Efficiency (1 node)", "eff_mpi_local.png")
+    plot_iso_mpi(pipe_mpi_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (1 node)", "through_mpi_local.png")
+
+    plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup (2 nodes)", "heatmap_speedup_cluster.png")
+    plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency (2 nodes)", "heatmap_eff_cluster.png")
+    plot_heatmap(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (2 nodes)", "heatmap_through_cluster.png")
+
+    plot_iso_mpi(pipe_mpi_cluster_mean, "SPEEDUP", "OMP+MPI Speedup (2 nodes)", "speedup_mpi_cluster.png")
+    plot_iso_mpi(pipe_mpi_cluster_mean, "EFFICIENCY", "OMP+MPI Efficiency (2 nodes)", "eff_mpi_cluster.png")
+    plot_iso_mpi(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (2 nodes)", "through_mpi_cluster.png")
 
     # plot_iso_omp(pipe_mpi_cluster_mean, "SPEEDUP", "prova_mpi", f"{PLOT_DIR}/prova_mpi.png")
