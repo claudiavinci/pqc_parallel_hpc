@@ -8,7 +8,7 @@ import seaborn as sns
 
 N_JOBS = 100000
 REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
-PLOT_DIR = f"./plots/{N_JOBS}_JOBS/"
+ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
 def preprocess_dataframe(df:DataFrame, groupby_cols:list):
     return df.groupby(groupby_cols, as_index=False).agg(TIME_SEC=("TIME_SEC", "median"), THROUGHPUT_JS=("THROUGHPUT_JS", "median")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
@@ -64,7 +64,10 @@ def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
                 "nodes": int(row_max_eff["NODES"]),
             })
 
-def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, savepath:str):
+def save_table(df, name):
+    df.to_csv(f"{ANALYSIS_DIR}/metrics/{name}.csv", index=False)
+
+def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, figname:str):
     plt.figure()
     
     plt.plot(
@@ -100,7 +103,7 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(savepath)
+    plt.savefig(f"{ANALYSIS_DIR}/plots/{figname}")
     plt.close()
 
 def plot_heatmap(df, metric, title, figname):
@@ -145,9 +148,8 @@ def plot_heatmap(df, metric, title, figname):
     ax.set_ylabel("MPI Ranks")
 
     plt.tight_layout()
-    plt.savefig(f"{PLOT_DIR}/{figname}")
+    plt.savefig(f"{ANALYSIS_DIR}/plots/{figname}")
     plt.close()
-
 
 def plot_iso_mpi(df, coly, title, figname):
 
@@ -170,7 +172,7 @@ def plot_iso_mpi(df, coly, title, figname):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"{PLOT_DIR}/{figname}")
+    plt.savefig(f"{ANALYSIS_DIR}/plots/{figname}")
     plt.close()
 
 if __name__ == "__main__":
@@ -211,14 +213,14 @@ if __name__ == "__main__":
 
     # print(json.dumps(best_res, indent=4, ensure_ascii=False))
 
-    with open(f"{PLOT_DIR}best_results.json", "w") as f: 
+    with open(f"{ANALYSIS_DIR}best_results.json", "w") as f: 
         json.dump(best_res, f, indent=4)
-    print(f"Saved JSON to {PLOT_DIR}")
+    print(f"Saved JSON to {ANALYSIS_DIR}")
 
-    # print(seq_omp_mean.head())
-    # print(pipe_mean.head())
-    # print(pipe_mpi_mean.head())
-    # print(pipe_mpi_cluster_mean.head())
+    save_table(seq_omp_mean, "seq_omp_metrics")
+    save_table(pipe_mean, "pipe_metrics")
+    save_table(pipe_mpi_mean, "pipe_mpi_metrics")
+    save_table(pipe_mpi_cluster_mean, "pipe_mpi_cluster_metrics")
     
     # -------------- METRICS PLOTS ------------------------
     
@@ -229,7 +231,7 @@ if __name__ == "__main__":
                  title="Sequential OMP vs. Pipeline OMP Speedup", 
                  xlabel="Total Workers", 
                  ylabel="Speedup", 
-                 savepath=f"{PLOT_DIR}speedup.png")
+                 figname=f"speedup.png")
     
     plot_metrics(seq_omp_mean, 
                  pipe_mean, 
@@ -238,7 +240,7 @@ if __name__ == "__main__":
                  title="Sequential OMP vs. Pipeline OMP Efficiency", 
                  xlabel="Total Workers", 
                  ylabel="Efficiency", 
-                 savepath=f"{PLOT_DIR}efficiency.png")
+                 figname=f"efficiency.png")
     
     plot_metrics(seq_omp_mean, 
                  pipe_mean, 
@@ -247,7 +249,7 @@ if __name__ == "__main__":
                  title="Sequential OMP vs. Pipeline OMP Throughput", 
                  xlabel="Total Workers", 
                  ylabel="Throughput (job/s)", 
-                 savepath=f"{PLOT_DIR}throughput_scaling.png")
+                 figname=f"throughput_scaling.png")
     
     # # -------------- MPI + OPENMP HEATMAP ------------------------
 

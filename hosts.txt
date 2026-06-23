@@ -1,2 +1,2 @@
-192.168.1.19
+claudia_lan
 andrea_wifi_claudia
