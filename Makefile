@@ -107,5 +107,15 @@ run_all_tests:
 	$(MAKE) run_all_mpi_local
 	$(MAKE) run_all_mpi_cluster	
 
+run_missing:
+	@for cfg in "3 8" "8 3" "8 8"; do \
+		set -- $$cfg; \
+		np=$$1; \
+		omp=$$2; \
+		for i in $$(seq 1 10); do \
+			mpiexec -f $(HOSTFILE) -n $$np -env OMP_NUM_THREADS=$$omp ./$(PIPE_MPI) $(NODES); \
+		done \
+	done
+
 clean:
 	rm -f $(SEQ) $(SEQ_OMP) $(PIPE) $(PIPE_MPI)

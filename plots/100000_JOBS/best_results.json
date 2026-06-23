@@ -1,51 +1,51 @@
 {
     "seq_omp": {
         "speedup": {
-            "value": 1.031,
-            "time": 24.893,
-            "efficiency": 0.344,
-            "throughput": 4017.324,
+            "value": 1.03,
+            "time": 24.929,
+            "efficiency": 0.343,
+            "throughput": 4011.349,
             "threads": 3
         },
         "efficiency": {
-            "value": 0.471,
-            "time": 27.235,
-            "speedup": 0.942,
-            "throughput": 3672.405,
+            "value": 0.472,
+            "time": 27.169,
+            "speedup": 0.945,
+            "throughput": 3680.779,
             "threads": 2
         }
     },
     "pipe": {
         "speedup": {
-            "value": 3.956,
-            "time": 6.488,
-            "efficiency": 0.494,
-            "throughput": 15423.957,
+            "value": 3.882,
+            "time": 6.611,
+            "efficiency": 0.485,
+            "throughput": 15125.837,
             "threads": 8
         },
         "efficiency": {
-            "value": 0.658,
-            "time": 9.752,
-            "speedup": 2.632,
-            "throughput": 10263.249,
-            "threads": 4
+            "value": 0.742,
+            "time": 17.292,
+            "speedup": 1.484,
+            "throughput": 5782.899,
+            "threads": 2
         }
     },
     "pipe_mpi": {
         "speedup": {
-            "value": 4.528,
-            "time": 5.668,
-            "efficiency": 0.566,
-            "throughput": 17664.917,
+            "value": 4.472,
+            "time": 5.739,
+            "efficiency": 0.559,
+            "throughput": 17423.556,
             "threads": 2,
             "mpi_ranks": 4,
             "tot_workers": 8
         },
         "efficiency": {
-            "value": 0.748,
-            "time": 8.577,
-            "speedup": 2.992,
-            "throughput": 11667.137,
+            "value": 0.75,
+            "time": 8.555,
+            "speedup": 3.0,
+            "throughput": 11689.118,
             "threads": 2,
             "mpi_ranks": 2,
             "tot_workers": 4
@@ -53,20 +53,20 @@
     },
     "pipe_mpi_cluster": {
         "speedup": {
-            "value": 8.179,
-            "time": 3.138,
-            "efficiency": 0.511,
-            "throughput": 32131.275,
+            "value": 8.058,
+            "time": 3.185,
+            "efficiency": 0.504,
+            "throughput": 31395.949,
             "threads": 8,
             "mpi_ranks": 2,
             "tot_workers": 16,
             "nodes": 2
         },
         "efficiency": {
-            "value": 0.831,
-            "time": 7.722,
-            "speedup": 3.324,
-            "throughput": 12953.071,
+            "value": 0.832,
+            "time": 7.711,
+            "speedup": 3.328,
+            "throughput": 12969.059,
             "threads": 2,
             "mpi_ranks": 2,
             "tot_workers": 4,

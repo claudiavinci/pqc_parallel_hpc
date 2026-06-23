@@ -1,12 +1,17 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.patches import Rectangle
 from pandas import DataFrame 
+import numpy as np
 import json
 import seaborn as sns
 
 N_JOBS = 100000
 REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
 PLOT_DIR = f"./plots/{N_JOBS}_JOBS/"
+
+def preprocess_dataframe(df:DataFrame, groupby_cols:list):
+    return df.groupby(groupby_cols, as_index=False).agg(TIME_SEC=("TIME_SEC", "median"), THROUGHPUT_JS=("THROUGHPUT_JS", "median")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
 
 def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
     df["SPEEDUP"] = (baseline / df["TIME_SEC"]).round(3)
@@ -86,7 +91,7 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
             linewidth=1.5,
             label="Ideal speedup"
         )
-
+    plt.xticks(sorted(df1["TOT_WORKERS"].unique()))
     plt.title(title)
     plt.xlabel(xlabel)
     plt.ylabel(ylabel)
@@ -98,55 +103,74 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
     plt.savefig(savepath)
     plt.close()
 
-def plot_heatmap(df, title, figname):
-
-    speedup_pivot = df.pivot_table(
+def plot_heatmap(df, metric, title, figname):
+    pivot = df.pivot_table(
         index = "MPI_RANKS",
         columns = "OMP_THREADS",
-        values = "SPEEDUP"
+        values = metric
     ).sort_index().sort_index(axis=1)
 
-    eff_pivot = df.pivot_table(
-        index = "MPI_RANKS",
-        columns = "OMP_THREADS",
-        values = "EFFICIENCY"
-    ).sort_index().sort_index(axis=1)
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(14, 6))
-
-    sns.heatmap(
-        speedup_pivot,
+    plt.figure()
+    current_cmap = plt.get_cmap("viridis").copy()
+    current_cmap.set_bad(color="lightgray")
+    ax = sns.heatmap(
+        pivot,
         annot=True,
         fmt=".3f",
-        cmap="viridis",
+        cmap=current_cmap,
         linewidths=1,
         linecolor="white",
-        cbar_kws={"label": "Speedup"},
-        annot_kws={"size": 11},
-        ax=ax1
+        cbar_kws={"label": metric.capitalize()},
+        annot_kws={"size": 12},
     )
-    ax1.set_title("Speedup")
-    ax1.set_xlabel("OMP Threads")
-    ax1.set_ylabel("MPI Ranks")
 
-    sns.heatmap(
-    eff_pivot,
-        annot=True,
-        fmt=".3f",
-        cmap="viridis",
-        linewidths=1,
-        linecolor="white",
-        cbar_kws={"label": "Efficiency"},
-        annot_kws={"size": 11},
-        ax=ax2
+    max_row_idx, max_col_idx = np.unravel_index(np.nanargmax(pivot.values), pivot.shape)
+    
+    # 2. Crea un rettangolo da sovrapporre alla cella
+    # Nota: in Matplotlib/Seaborn le colonne sono sull'asse X e le righe sull'asse Y
+    rect = Rectangle(
+        (max_col_idx, max_row_idx), # Punto di partenza (angolo in alto a sinistra della cella)
+        1, 1,                       # Larghezza e altezza del rettangolo (1 sola cella)
+        fill=False,                 # Non riempire l'interno, vogliamo solo il bordo
+        edgecolor="red",            # Colore del bordo (puoi usare anche "magenta", "white", ecc.)
+        linewidth=3,                # Spessore del bordo
+        linestyle="-"               # Stile della linea
     )
-    ax2.set_title("Efficiency")
-    ax2.set_xlabel("OMP Threads")
-    ax2.set_ylabel("MPI Ranks")
+    
+    # 3. Aggiunge il rettangolo all'asse grafico
+    ax.add_patch(rect)
 
-    fig.suptitle(title, fontsize=18)
+    ax.set_title(title)
+    ax.set_xlabel("OMP Threads")
+    ax.set_ylabel("MPI Ranks")
+
     plt.tight_layout()
     plt.savefig(f"{PLOT_DIR}{figname}")
+    plt.close()
+
+
+def plot_iso_omp(df, coly, title, savepath):
+
+    plt.figure()
+
+    for omp in sorted(df["OMP_THREADS"].unique()):
+        sub = df[df["OMP_THREADS"] == omp].sort_values("MPI_RANKS")
+
+        plt.plot(
+            sub["MPI_RANKS"],
+            sub[coly],
+            marker="o",
+            label=f"OMP={omp}"
+        )
+
+    plt.xticks(sorted(df["MPI_RANKS"].unique()))
+    plt.title(title)
+    plt.xlabel("MPI Ranks")
+    plt.ylabel(coly)
+    plt.grid(True)
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(savepath)
     plt.close()
 
 if __name__ == "__main__":
@@ -166,10 +190,10 @@ if __name__ == "__main__":
 
     # -------------- MEAN VALUES FOR EACH CONFIG ------------------------
     
-    seq_omp_mean = seq_omp_df.groupby(["TOT_WORKERS", "OMP_THREADS"], as_index=False).agg(TIME_SEC=("TIME_SEC", "mean"), THROUGHPUT_JS=("THROUGHPUT_JS", "mean")).round(3).sort_values("OMP_THREADS").reset_index(drop=True)
-    pipe_mean = pipe_df.groupby(["TOT_WORKERS", "OMP_THREADS"], as_index=False).agg(TIME_SEC=("TIME_SEC", "mean"), THROUGHPUT_JS=("THROUGHPUT_JS", "mean")).round(3).sort_values("OMP_THREADS").reset_index(drop=True)
-    pipe_mpi_mean = pipe_mpi_df.groupby(["TOT_WORKERS", "MPI_RANKS", "OMP_THREADS"], as_index=False).agg(TIME_SEC=("TIME_SEC", "mean"), THROUGHPUT_JS=("THROUGHPUT_JS", "mean")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
-    pipe_mpi_cluster_mean = pipe_mpi_cluster_df.groupby(["TOT_WORKERS", "MPI_RANKS", "OMP_THREADS", "NODES"], as_index=False).agg(TIME_SEC=("TIME_SEC", "mean"), THROUGHPUT_JS=("THROUGHPUT_JS", "mean")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
+    seq_omp_mean = preprocess_dataframe(seq_omp_df, ["TOT_WORKERS", "OMP_THREADS"])
+    pipe_mean = preprocess_dataframe(pipe_df, ["TOT_WORKERS", "OMP_THREADS"])
+    pipe_mpi_mean = preprocess_dataframe(pipe_mpi_df, ["TOT_WORKERS", "MPI_RANKS", "OMP_THREADS"])
+    pipe_mpi_cluster_mean = preprocess_dataframe(pipe_mpi_cluster_df, ["TOT_WORKERS", "MPI_RANKS", "OMP_THREADS", "NODES"])
     
     # # -------------- SPEEDUP, EFFICIENCY AND BEST RESULTS ------------------------
     
@@ -197,21 +221,12 @@ if __name__ == "__main__":
     # print(pipe_mpi_cluster_mean.head())
     
     # -------------- METRICS PLOTS ------------------------
-
-    plot_metrics(seq_omp_mean, 
-                 pipe_mean,  
-                 colx="TOT_WORKERS", 
-                 coly="TIME_SEC", 
-                 title="Execution Time Scaling", 
-                 xlabel="Total Workers", 
-                 ylabel="Time (s)", 
-                 savepath=f"{PLOT_DIR}exec_time_scaling.png")
     
     plot_metrics(seq_omp_mean, 
                  pipe_mean, 
                  colx="TOT_WORKERS", 
                  coly="SPEEDUP", 
-                 title="Parallel Speedup", 
+                 title="Sequential OMP vs. Pipeline OMP Speedup", 
                  xlabel="Total Workers", 
                  ylabel="Speedup", 
                  savepath=f"{PLOT_DIR}speedup.png")
@@ -220,7 +235,7 @@ if __name__ == "__main__":
                  pipe_mean, 
                  colx="TOT_WORKERS", 
                  coly="EFFICIENCY", 
-                 title="Parallel Efficiency", 
+                 title="Sequential OMP vs. Pipeline OMP Efficiency", 
                  xlabel="Total Workers", 
                  ylabel="Efficiency", 
                  savepath=f"{PLOT_DIR}efficiency.png")
@@ -229,42 +244,19 @@ if __name__ == "__main__":
                  pipe_mean, 
                  colx="TOT_WORKERS", 
                  coly="THROUGHPUT_JS", 
-                 title="Throughput Scaling", 
+                 title="Sequential OMP vs. Pipeline OMP Throughput", 
                  xlabel="Total Workers", 
                  ylabel="Throughput (job/s)", 
                  savepath=f"{PLOT_DIR}throughput_scaling.png")
     
-    plot_metrics(seq_omp_mean, 
-                pipe_mean, 
-                colx="TOT_WORKERS", 
-                coly="THROUGHPUT_JS", 
-                title="Throughput Scaling", 
-                xlabel="Total Workers", 
-                ylabel="Throughput (job/s)", 
-                savepath=f"{PLOT_DIR}throughput_scaling.png")
-    
     # # -------------- MPI + OPENMP HEATMAP ------------------------
-    
-    # plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup Heatmap (1 node)" ,"heatmap_speedup_local.png")
-    # plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency Heatmap (1 node)" ,"heatmap_eff_local.png")
-    # plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup Heatmap (2 nodes)" ,"heatmap_speedup_cluster.png")
-    # plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency Heatmap (2 nodes)" ,"heatmap_eff_cluster.png")
 
-    plot_heatmap(pipe_mpi_mean, "MPI+OMP Performance Heatmaps (1 node)" ,"heatmaps_local.png")
-    plot_heatmap(pipe_mpi_cluster_mean, "MPI+OMP Performance Heatmaps (2 nodes)" ,"heatmaps_cluster.png")
+    plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup (1 node)", "heatmap_speedup_local.png")
+    plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency (1 node)", "heatmap_eff_local.png")
+    plot_heatmap(pipe_mpi_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (1 node)", "heatmap_through_local.png")
 
-    # # pipe_mpi_fixed = pipe_mpi_mean[pipe_mpi_mean["OMP_THREADS"] == 3].copy()
+    plot_iso_omp(pipe_mpi_mean, "SPEEDUP", "OMP+MPI Speedup (1 node)", f"{PLOT_DIR}/speedup_mpi_local.png")
+    plot_iso_omp(pipe_mpi_mean, "EFFICIENCY", "OMP+MPI Efficiency (1 node)", f"{PLOT_DIR}/eff_mpi_local.png")
+    plot_iso_omp(pipe_mpi_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (1 node)", f"{PLOT_DIR}/through_mpi_local.png")
 
-
-
-    # # 3. Plot Pipeline Hybrid (MPI + OMP) diviso per configurazione
-    # # Usiamo seaborn per tracciare una linea diversa per ogni numero di MPI_RANKS
-    # sns.lineplot(
-    #     data=pip_omp_mpi,
-    #     x=colx,
-    #     y=coly,
-    #     hue="MPI_RANKS",       # Crea una curva diversa per ogni numero di rank
-    #     palette="viridis",     # Scala di colori coerente
-    #     marker="D",
-    #     legend=True
-    # )
+    # plot_iso_omp(pipe_mpi_cluster_mean, "SPEEDUP", "prova_mpi", f"{PLOT_DIR}/prova_mpi.png")
