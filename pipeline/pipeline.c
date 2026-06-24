@@ -23,51 +23,47 @@ static inline int check_stage(kem_job *job){
 }
 
 void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job){
-    int local_success = 0;
 
     #pragma omp parallel
     {
         #pragma omp single
         {   
-            #pragma omp taskgroup task_reduction(+:local_success)
-            {
-                for(int i=start_job; i < end_job; i++){
-                    // jobs[i].status = KEM_SUCCESS;
-                    // ---------- KEYGEN STAGE ----------
-                    #pragma omp task firstprivate(i) depend(out: jobs[i].keygen_done)
-                    {
-                        keygen_stage(&jobs[i]);
-                    }
+            for(int i=start_job; i < end_job; i++){
+                // jobs[i].status = KEM_SUCCESS;
+                // ---------- KEYGEN STAGE ----------
+                #pragma omp task firstprivate(i) depend(out: jobs[i].pk, jobs[i].sk)
+                {
+                    keygen_stage(&jobs[i]);
+                }
 
-                    // ---------- ENCAPSULATION STAGE ----------
-                    #pragma omp task firstprivate(i) depend(in: jobs[i].keygen_done) depend(out: jobs[i].enc_done)
-                    {
-                        enc_stage(&jobs[i]);
-                    }
+                // ---------- ENCAPSULATION STAGE ----------
+                #pragma omp task firstprivate(i) depend(in: jobs[i].pk, jobs[i].sk) depend(out: jobs[i].ct, jobs[i].ss_enc)
+                {
+                    enc_stage(&jobs[i]);
+                }
 
-                    // ---------- DECAPSULATION STAGE ----------
-                    #pragma omp task firstprivate(i) depend(in: jobs[i].enc_done) depend(out: jobs[i].dec_done)
-                    {
-                            dec_stage(&jobs[i]);
-                    }
+                // ---------- DECAPSULATION STAGE ----------
+                #pragma omp task firstprivate(i) depend(in: jobs[i].ct, jobs[i].ss_enc) depend(out: jobs[i].ss_dec)
+                {
+                        dec_stage(&jobs[i]);
+                }
 
-                    // ---------- CHECK STAGE ----------
-                    #pragma omp task firstprivate(i) depend(in: jobs[i].dec_done) in_reduction(+:local_success)
-                    {
-                            if (!check_stage(&jobs[i])){
-                                // jobs[i].status = KEM_FAIL;
-                                printf("Shared secrets do not match for job %d. Test failed.\n", i);
-                            } else {
-                                local_success++;
-                            }
-                            
-                        // }
-                    }
+                // ---------- CHECK STAGE ----------
+                #pragma omp task firstprivate(i) depend(in: jobs[i].ss_dec)
+                {
+                        if (!check_stage(&jobs[i])){
+                            // jobs[i].status = KEM_FAIL;
+                            printf("Shared secrets do not match for job %d. Test failed.\n", i);
+                        } else {
+                            #pragma omp atomic
+                            (*success)++;
+                        }
+                        
+                    // }
                 }
             }
         }
     }
-    *success += local_success;
 }
 
 // void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job){
