@@ -18,7 +18,13 @@ typedef struct {
     uint8_t ct[PQCLEAN_MLKEM768_CLEAN_CRYPTO_CIPHERTEXTBYTES];
     uint8_t ss_enc[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
     uint8_t ss_dec[PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES];
-    int status;
+
+    // int status;
+    // aggiunta per ottimizzazione pipeline
+    char keygen_done;
+    char enc_done;
+    char dec_done;
+
 } kem_job;
 
 #endif /* COMMON_H */

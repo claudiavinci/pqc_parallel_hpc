@@ -17,30 +17,36 @@
 #endif
 
 int run_kem_job(kem_job *job) {
-    if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair(job->pk, job->sk) != 0) {
-        printf("Key pair generation failed\n");
-        return KEM_FAIL;
-    }
-
-    // Encapsulation
-    if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc(job->ct, job->ss_enc, job->pk) != 0) {
-        printf("Encapsulation failed\n");
-        return KEM_FAIL;
-    }
-
-    // Decapsulation
-    if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec(job->ss_dec, job->ct, job->sk) != 0) {
-        printf("Decapsulation failed\n");
-        return KEM_FAIL;
-    }
-
-    // Verify that the shared secrets match
+    PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair(job->pk, job->sk);
+    PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc(job->ct, job->ss_enc, job->pk);
+    PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec(job->ss_dec, job->ct, job->sk);
+    
     if (memcmp(job->ss_enc, job->ss_dec, PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES) == 0) {
         return KEM_SUCCESS;
     } else {
         printf("Shared secrets do not match. Test failed.\n");
         return KEM_FAIL;
     }
+
+    // if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair(job->pk, job->sk) != 0) {
+    //     printf("Key pair generation failed\n");
+    //     return KEM_FAIL;
+    // }
+
+    // // Encapsulation
+    // if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_enc(job->ct, job->ss_enc, job->pk) != 0) {
+    //     printf("Encapsulation failed\n");
+    //     return KEM_FAIL;
+    // }
+
+    // // Decapsulation
+    // if (PQCLEAN_MLKEM768_CLEAN_crypto_kem_dec(job->ss_dec, job->ct, job->sk) != 0) {
+    //     printf("Decapsulation failed\n");
+    //     return KEM_FAIL;
+    // }
+
+    // Verify that the shared secrets match
+
 }
 
 int main(int argc, char *argv[]) {
