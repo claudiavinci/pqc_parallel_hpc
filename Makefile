@@ -50,8 +50,6 @@ run_all_seq_omp:
 	@for omp in 2 3 4 5 8; do \
 		for i in $$(seq 1 10); do \
 			OMP_NUM_THREADS=$$omp \
-			OMP_PROC_BIND=spread \
-			OMP_PLACES=cores \ 
 			./$(SEQ_OMP); \
 		done \
 	done
@@ -65,8 +63,6 @@ run_all_pipe:
 	@for omp in 2 3 4 5 8; do \
 		for i in $$(seq 1 10); do \
 			OMP_NUM_THREADS=$$omp \
-			OMP_PROC_BIND=spread \
-			OMP_PLACES=cores \
 			./$(PIPE); \
 		done \
 	done
@@ -87,8 +83,6 @@ run_all_mpi_local:
 		for i in $$(seq 1 10); do \
 			mpiexec -n $$np \
 				-genv OMP_NUM_THREADS=$$omp \
-				-genv OMP_PROC_BIND=spread \
-				-genv OMP_PLACES=cores \
 				./$(PIPE_MPI); \
 		done \
 	done
@@ -107,28 +101,16 @@ run_all_mpi_cluster:
 		for i in $$(seq 1 10); do \
 			mpiexec -f $(HOSTFILE) -n $$np \
 				-genv OMP_NUM_THREADS=$$omp \
-				-genv OMP_PROC_BIND=spread \
-				-genv OMP_PLACES=cores \
 				./$(PIPE_MPI) $(NODES); \
 		done \
 	done
 
-run_all_tests: 
+run_all_tests:
 	$(MAKE) run_seq
 	$(MAKE) run_all_seq_omp
 	$(MAKE) run_all_pipe
 	$(MAKE) run_all_mpi_local
 	$(MAKE) run_all_mpi_cluster	
-
-run_missing:
-	@for cfg in "3 8" "8 3" "8 8"; do \
-		set -- $$cfg; \
-		np=$$1; \
-		omp=$$2; \
-		for i in $$(seq 1 10); do \
-			mpiexec -f $(HOSTFILE) -n $$np -env OMP_NUM_THREADS=$$omp ./$(PIPE_MPI) $(NODES); \
-		done \
-	done
 
 clean:
 	rm -f $(SEQ) $(SEQ_OMP) $(PIPE) $(PIPE_MPI)

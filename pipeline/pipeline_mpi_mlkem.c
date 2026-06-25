@@ -49,7 +49,6 @@ int main(int argc, char *argv[]) {
 
     MPI_Barrier(MPI_COMM_WORLD);
     double t1 = MPI_Wtime();
-
     double local_elapsed = t1 - t0;
     double global_elapsed = 0.0;
 
