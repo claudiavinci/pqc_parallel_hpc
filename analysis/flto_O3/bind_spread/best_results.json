@@ -1,0 +1,76 @@
+{
+    "seq_omp": {
+        "speedup": {
+            "value": 1.619,
+            "time": 14.67,
+            "efficiency": 0.54,
+            "throughput": 6812.203,
+            "threads": 3
+        },
+        "efficiency": {
+            "value": 0.717,
+            "time": 16.566,
+            "speedup": 1.434,
+            "throughput": 6036.584,
+            "threads": 2
+        }
+    },
+    "pipe": {
+        "speedup": {
+            "value": 5.623,
+            "time": 4.224,
+            "efficiency": 0.703,
+            "throughput": 23603.269,
+            "threads": 8
+        },
+        "efficiency": {
+            "value": 1.048,
+            "time": 11.337,
+            "speedup": 2.095,
+            "throughput": 8821.692,
+            "threads": 2
+        }
+    },
+    "pipe_mpi": {
+        "speedup": {
+            "value": 5.826,
+            "time": 4.077,
+            "efficiency": 0.728,
+            "throughput": 24525.639,
+            "threads": 4,
+            "mpi_ranks": 2,
+            "tot_workers": 8
+        },
+        "efficiency": {
+            "value": 0.948,
+            "time": 6.263,
+            "speedup": 3.792,
+            "throughput": 15961.229,
+            "threads": 2,
+            "mpi_ranks": 2,
+            "tot_workers": 4
+        }
+    },
+    "pipe_mpi_cluster": {
+        "speedup": {
+            "value": 9.093,
+            "time": 2.612,
+            "efficiency": 0.568,
+            "throughput": 38282.596,
+            "threads": 8,
+            "mpi_ranks": 2,
+            "tot_workers": 16,
+            "nodes": 2
+        },
+        "efficiency": {
+            "value": 1.054,
+            "time": 5.633,
+            "speedup": 4.216,
+            "throughput": 17754.236,
+            "threads": 2,
+            "mpi_ranks": 2,
+            "tot_workers": 4,
+            "nodes": 2
+        }
+    }
+}
