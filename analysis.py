@@ -7,8 +7,18 @@ import json
 import seaborn as sns
 
 N_JOBS = 100000
-REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
-ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
+# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
+# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
+
+REPORT_DIR = f"./report_out/flto_O3/no_bind"
+ANALYSIS_DIR = f"./analysis/flto_O3/no_bind"
+
+# REPORT_DIR = f"./report_out/flto_O3/bind_spread"
+# ANALYSIS_DIR = f"./analysis/flto_O3/bind_spread"
+
+PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
+METRICS_DIR = f"{ANALYSIS_DIR}metrics/"
+OPT_DIR = f"{ANALYSIS_DIR}"
 
 def preprocess_dataframe(df:DataFrame, groupby_cols:list):
     return df.groupby(groupby_cols, as_index=False).agg(TIME_SEC=("TIME_SEC", "median"), THROUGHPUT_JS=("THROUGHPUT_JS", "median")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
@@ -64,10 +74,7 @@ def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
                 "nodes": int(row_max_eff["NODES"]),
             })
 
-def save_table(df, name):
-    df.to_csv(f"{ANALYSIS_DIR}/metrics/{name}.csv", index=False)
-
-def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, figname:str):
+def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, savepath:str):
     plt.figure()
     
     plt.plot(
@@ -103,10 +110,10 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, fig
     plt.legend()
 
     plt.tight_layout()
-    plt.savefig(f"{ANALYSIS_DIR}/plots/{figname}")
+    plt.savefig(savepath)
     plt.close()
 
-def plot_heatmap(df, metric, title, figname):
+def plot_heatmap(df, metric, title, savepath):
     pivot = df.pivot_table(
         index = "MPI_RANKS",
         columns = "OMP_THREADS",
@@ -148,10 +155,10 @@ def plot_heatmap(df, metric, title, figname):
     ax.set_ylabel("MPI Ranks")
 
     plt.tight_layout()
-    plt.savefig(f"{ANALYSIS_DIR}/plots/{figname}")
+    plt.savefig(savepath)
     plt.close()
 
-def plot_iso_mpi(df, coly, title, figname):
+def plot_iso_mpi(df, coly, title, savepath):
 
     plt.figure()
 
@@ -172,7 +179,7 @@ def plot_iso_mpi(df, coly, title, figname):
     plt.grid(True)
     plt.legend()
     plt.tight_layout()
-    plt.savefig(f"{ANALYSIS_DIR}/plots/{figname}")
+    plt.savefig(savepath)
     plt.close()
 
 if __name__ == "__main__":
@@ -180,13 +187,13 @@ if __name__ == "__main__":
     # -------------- REPORTS READING ------------------------
     print(f"Reading results from {REPORT_DIR}...")
 
-    seq_df = pd.read_csv(f"{REPORT_DIR}seq_mlkem_results.csv")
+    seq_df = pd.read_csv(f"{REPORT_DIR}/seq_mlkem_results.csv")
     baseline = seq_df[seq_df["OMP_ENABLED"] == 0]["TIME_SEC"].mean().round(3)
     seq_omp_df = seq_df[seq_df["OMP_ENABLED"] == 1].copy().reset_index(drop=True)
 
-    pipe_df = pd.read_csv(f"{REPORT_DIR}pipeline_results.csv")
+    pipe_df = pd.read_csv(f"{REPORT_DIR}/pipeline_results.csv")
     
-    pipe_mpi_df = pd.read_csv(f"{REPORT_DIR}pipeline_mpi_results.csv")
+    pipe_mpi_df = pd.read_csv(f"{REPORT_DIR}/pipeline_mpi_results.csv")
     pipe_mpi_cluster_df = pipe_mpi_df[pipe_mpi_df["NODES"] > 1].copy().reset_index(drop=True)
     pipe_mpi_df = pipe_mpi_df[pipe_mpi_df["NODES"] == 1].reset_index(drop=True)
 
@@ -213,14 +220,14 @@ if __name__ == "__main__":
 
     # print(json.dumps(best_res, indent=4, ensure_ascii=False))
 
-    with open(f"{ANALYSIS_DIR}best_results.json", "w") as f: 
+    with open(f"{ANALYSIS_DIR}/best_results.json", "w") as f: 
         json.dump(best_res, f, indent=4)
     print(f"Saved JSON to {ANALYSIS_DIR}")
 
-    save_table(seq_omp_mean, "seq_omp_metrics")
-    save_table(pipe_mean, "pipe_metrics")
-    save_table(pipe_mpi_mean, "pipe_mpi_metrics")
-    save_table(pipe_mpi_cluster_mean, "pipe_mpi_cluster_metrics")
+    seq_omp_mean.to_csv(f"{METRICS_DIR}seq_omp_metrics.csv", index=False)
+    pipe_mean.to_csv(f"{METRICS_DIR}pipe_metrics.csv", index=False)
+    pipe_mpi_mean.to_csv(f"{METRICS_DIR}pipe_mpi_metrics.csv", index=False)
+    pipe_mpi_cluster_mean.to_csv(f"{METRICS_DIR}pipe_mpi_cluster_metrics.csv", index=False)
     
     # -------------- METRICS PLOTS ------------------------
     
@@ -231,7 +238,7 @@ if __name__ == "__main__":
                  title="Sequential OMP vs. Pipeline OMP Speedup", 
                  xlabel="Total Workers", 
                  ylabel="Speedup", 
-                 figname=f"speedup.png")
+                 savepath=f"{PLOTS_DIR}speedup.png")
     
     plot_metrics(seq_omp_mean, 
                  pipe_mean, 
@@ -240,7 +247,7 @@ if __name__ == "__main__":
                  title="Sequential OMP vs. Pipeline OMP Efficiency", 
                  xlabel="Total Workers", 
                  ylabel="Efficiency", 
-                 figname=f"efficiency.png")
+                 savepath=f"{PLOTS_DIR}efficiency.png")
     
     plot_metrics(seq_omp_mean, 
                  pipe_mean, 
@@ -249,24 +256,22 @@ if __name__ == "__main__":
                  title="Sequential OMP vs. Pipeline OMP Throughput", 
                  xlabel="Total Workers", 
                  ylabel="Throughput (job/s)", 
-                 figname=f"throughput_scaling.png")
+                 savepath=f"{PLOTS_DIR}throughput_scaling.png")
     
     # # -------------- MPI + OPENMP HEATMAP ------------------------
 
-    plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup (1 node)", "heatmap_speedup_local.png")
-    plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency (1 node)", "heatmap_eff_local.png")
-    plot_heatmap(pipe_mpi_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (1 node)", "heatmap_through_local.png")
+    plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_speedup.png")
+    plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_eff.png")
+    plot_heatmap(pipe_mpi_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_through.png")
 
-    plot_iso_mpi(pipe_mpi_mean, "SPEEDUP", "OMP+MPI Speedup (1 node)", "speedup_mpi_local.png")
-    plot_iso_mpi(pipe_mpi_mean, "EFFICIENCY", "OMP+MPI Efficiency (1 node)", "eff_mpi_local.png")
-    plot_iso_mpi(pipe_mpi_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (1 node)", "through_mpi_local.png")
+    plot_iso_mpi(pipe_mpi_mean, "SPEEDUP", "OMP+MPI Speedup (1 node)", f"{PLOTS_DIR}/mpi_local/speedup.png")
+    plot_iso_mpi(pipe_mpi_mean, "EFFICIENCY", "OMP+MPI Efficiency (1 node)", f"{PLOTS_DIR}/mpi_local/efficiency.png")
+    plot_iso_mpi(pipe_mpi_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (1 node)", f"{PLOTS_DIR}/mpi_local/throughput.png")
 
-    plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup (2 nodes)", "heatmap_speedup_cluster.png")
-    plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency (2 nodes)", "heatmap_eff_cluster.png")
-    plot_heatmap(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (2 nodes)", "heatmap_through_cluster.png")
+    plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_speedup.png")
+    plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_eff.png")
+    plot_heatmap(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_through.png")
 
-    plot_iso_mpi(pipe_mpi_cluster_mean, "SPEEDUP", "OMP+MPI Speedup (2 nodes)", "speedup_mpi_cluster.png")
-    plot_iso_mpi(pipe_mpi_cluster_mean, "EFFICIENCY", "OMP+MPI Efficiency (2 nodes)", "eff_mpi_cluster.png")
-    plot_iso_mpi(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (2 nodes)", "through_mpi_cluster.png")
-
-    # plot_iso_omp(pipe_mpi_cluster_mean, "SPEEDUP", "prova_mpi", f"{PLOT_DIR}/prova_mpi.png")
+    plot_iso_mpi(pipe_mpi_cluster_mean, "SPEEDUP", "OMP+MPI Speedup (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/speedup.png")
+    plot_iso_mpi(pipe_mpi_cluster_mean, "EFFICIENCY", "OMP+MPI Efficiency (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/efficiency.png")
+    plot_iso_mpi(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/throughput.png")
