@@ -277,6 +277,7 @@ void PQCLEAN_MLKEM768_CLEAN_poly_reduce(poly *r) {
 **************************************************/
 void PQCLEAN_MLKEM768_CLEAN_poly_add(poly *r, const poly *a, const poly *b) {
     size_t i;
+    #pragma omp simd
     for (i = 0; i < KYBER_N; i++) {
         r->coeffs[i] = a->coeffs[i] + b->coeffs[i];
     }
@@ -293,6 +294,7 @@ void PQCLEAN_MLKEM768_CLEAN_poly_add(poly *r, const poly *a, const poly *b) {
 **************************************************/
 void PQCLEAN_MLKEM768_CLEAN_poly_sub(poly *r, const poly *a, const poly *b) {
     size_t i;
+    #pragma omp simd
     for (i = 0; i < KYBER_N; i++) {
         r->coeffs[i] = a->coeffs[i] - b->coeffs[i];
     }
