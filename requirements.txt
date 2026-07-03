@@ -1,8 +1,0 @@
-sudo apt install build-essential
-# gcc
-# g++
-# make
-sudo apt install openmpi-bin libopenmpi-dev
-# mpicc
-# mpirun
-

@@ -29,7 +29,7 @@ void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job){
         #pragma omp single
         {   
             for(int i=start_job; i < end_job; i++){
-                // jobs[i].status = KEM_SUCCESS;
+
                 // ---------- KEYGEN STAGE ----------
                 #pragma omp task firstprivate(i) depend(out: jobs[i].pk, jobs[i].sk)
                 {
@@ -51,15 +51,13 @@ void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job){
                 // ---------- CHECK STAGE ----------
                 #pragma omp task firstprivate(i) depend(in: jobs[i].ss_dec)
                 {
-                        if (!check_stage(&jobs[i])){
-                            // jobs[i].status = KEM_FAIL;
-                            printf("Shared secrets do not match for job %d. Test failed.\n", i);
-                        } else {
-                            #pragma omp atomic
-                            (*success)++;
-                        }
-                        
-                    // }
+                    if (!check_stage(&jobs[i])){
+                        // jobs[i].status = KEM_FAIL;
+                        printf("Shared secrets do not match for job %d. Test failed.\n", i);
+                    } else {
+                        #pragma omp atomic
+                        (*success)++;
+                    }
                 }
             }
         }
