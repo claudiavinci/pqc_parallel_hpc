@@ -1,6 +1,6 @@
 # pqc_parallel_hpc
 
-Parallelization of Post-Quantum Cryptography ML-KEM-768 using MPI and OpenMP.
+Parallelization of Post-Quantum Cryptography ML-KEM-768 Workload using MPI and OpenMP.
 
 ## Requirements
 
