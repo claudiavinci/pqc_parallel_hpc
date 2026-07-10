@@ -31,7 +31,9 @@ int main(int argc, char *argv[]) {
     MPI_Get_processor_name(hostname, &len);
     printf("\nPipeline omp+mpi execution starting on Rank %d/%d running on %s\n", rank, size, hostname);
     fflush(stdout);
-
+    
+    MPI_Barrier(MPI_COMM_WORLD);
+    double t0 = MPI_Wtime(); // Prendo il tempo di inizio
     int global_success = 0;
     int local_success = 0;
 
@@ -41,9 +43,6 @@ int main(int argc, char *argv[]) {
     int rem_jobs = N_JOBS % size;
     int start_job = rank * job_chunk + (rank < rem_jobs ? rank : rem_jobs);
     int end_job = start_job + job_chunk + (rank < rem_jobs ? 1 : 0);
-
-    MPI_Barrier(MPI_COMM_WORLD);
-    double t0 = MPI_Wtime(); // Prendo il tempo di inizio
 
     run_pipeline_omp(jobs, &local_success, start_job, end_job);
 

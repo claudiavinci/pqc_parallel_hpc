@@ -7,14 +7,11 @@ import json
 import seaborn as sns
 
 N_JOBS = 100000
-# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
-# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
+REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
+ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
 # REPORT_DIR = f"./report_out/flto_O3/no_bind/"
 # ANALYSIS_DIR = f"./analysis/flto_O3/no_bind/"
-
-REPORT_DIR = f"./report_out/flto_O3/bind_spread/"
-ANALYSIS_DIR = f"./analysis/flto_O3/bind_spread/"
 
 PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
 METRICS_DIR = f"{ANALYSIS_DIR}metrics/"
@@ -32,6 +29,7 @@ def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
 
     row_max_speedup = df.loc[idx_max_speedup]
     row_max_eff = df.loc[idx_max_eff]
+    row_max_through = df.loc[df["THROUGHPUT_JS"].idxmax()]
 
     best_res[df_name] = {
                 "speedup": {
@@ -47,8 +45,16 @@ def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
                     "speedup": row_max_eff["SPEEDUP"],
                     "throughput": row_max_eff["THROUGHPUT_JS"],
                     "threads": int(row_max_eff["OMP_THREADS"]),
+                },
+                "throughput": {
+                    "value": row_max_through["THROUGHPUT_JS"],
+                    "time": row_max_through["TIME_SEC"],
+                    "speedup": row_max_through["SPEEDUP"],
+                    "efficiency": row_max_through["EFFICIENCY"],
+                    "threads": int(row_max_through["OMP_THREADS"]),
                 }
             }
+    
 
     match df_name:
         case "pipe_mpi": 
@@ -62,6 +68,11 @@ def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
                 "tot_workers": int(row_max_eff["TOT_WORKERS"]),
             })
 
+            best_res[df_name]["throughput"].update({
+                "mpi_ranks": int(row_max_through["MPI_RANKS"]),
+                "tot_workers": int(row_max_through["TOT_WORKERS"]),
+            })
+
         case "pipe_mpi_cluster": 
             best_res[df_name]["speedup"].update({
                 "mpi_ranks": int(row_max_speedup["MPI_RANKS"]),
@@ -73,7 +84,11 @@ def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
                 "tot_workers": int(row_max_eff["TOT_WORKERS"]),
                 "nodes": int(row_max_eff["NODES"]),
             })
-
+            best_res[df_name]["throughput"].update({
+                "mpi_ranks": int(row_max_through["MPI_RANKS"]),
+                "tot_workers": int(row_max_through["TOT_WORKERS"]),
+                "nodes": int(row_max_through["NODES"]),
+            })
 def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, savepath:str):
     plt.figure()
     
@@ -96,6 +111,7 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
             df2["TOT_WORKERS"],
             df2["TOT_WORKERS"],
             "--",
+            marker="o", 
             color="gray",
             alpha=0.7,
             linewidth=1.5,
@@ -236,7 +252,7 @@ if __name__ == "__main__":
                  colx="TOT_WORKERS", 
                  coly="SPEEDUP", 
                  title="Sequential OMP vs. Pipeline OMP Speedup", 
-                 xlabel="Total Workers", 
+                 xlabel="Total Workers (Threads)", 
                  ylabel="Speedup", 
                  savepath=f"{PLOTS_DIR}speedup.png")
     
@@ -245,7 +261,7 @@ if __name__ == "__main__":
                  colx="TOT_WORKERS", 
                  coly="EFFICIENCY", 
                  title="Sequential OMP vs. Pipeline OMP Efficiency", 
-                 xlabel="Total Workers", 
+                 xlabel="Total Workers (Threads)", 
                  ylabel="Efficiency", 
                  savepath=f"{PLOTS_DIR}efficiency.png")
     
@@ -254,7 +270,7 @@ if __name__ == "__main__":
                  colx="TOT_WORKERS", 
                  coly="THROUGHPUT_JS", 
                  title="Sequential OMP vs. Pipeline OMP Throughput", 
-                 xlabel="Total Workers", 
+                 xlabel="Total Workers (Threads)", 
                  ylabel="Throughput (job/s)", 
                  savepath=f"{PLOTS_DIR}throughput_scaling.png")
     
