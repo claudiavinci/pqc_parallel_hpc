@@ -31,7 +31,6 @@ int run_kem_job(kem_job *job) {
 
 int main(int argc, char *argv[]) {
     // Funzione standard C per prendere il tempo ad alta risoluzione (Monotonic clock)
-    struct timespec start, end;
 
     int global_success = 0;
     struct timespec t0, t1;
