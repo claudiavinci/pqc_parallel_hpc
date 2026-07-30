@@ -7,88 +7,91 @@ import json
 import seaborn as sns
 
 N_JOBS = 100000
-REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
-ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
+# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
+# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
-# REPORT_DIR = f"./report_out/flto_O3/no_bind/"
-# ANALYSIS_DIR = f"./analysis/flto_O3/no_bind/"
+REPORT_DIR = f"./report_out/flto_O3/no_bind/"
+ANALYSIS_DIR = f"./analysis/flto_O3/no_bind/"
 
 PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
 METRICS_DIR = f"{ANALYSIS_DIR}metrics/"
-OPT_DIR = f"{ANALYSIS_DIR}"
+
+TIME_METRICS = {
+    "TOTAL": "TIME_SEC",
+    "KEYGEN": "KEYGEN_SEC",
+    "ENC": "ENC_SEC",
+    "DEC": "DEC_SEC",
+}
 
 def preprocess_dataframe(df:DataFrame, groupby_cols:list):
     return df.groupby(groupby_cols, as_index=False).agg(TIME_SEC=("TIME_SEC", "median"), THROUGHPUT_JS=("THROUGHPUT_JS", "median")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
 
-def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
-    df["SPEEDUP"] = (baseline / df["TIME_SEC"]).round(3)
-    df["EFFICIENCY"] = (df["SPEEDUP"] / df["TOT_WORKERS"]).round(3)
+def add_speedup_efficiency(df: DataFrame, baseline, metric):
+    speedup = f"{metric}_SPEEDUP"
+    efficiency = f"{metric}_EFFICIENCY"
 
-    idx_max_speedup = df["SPEEDUP"].idxmax()
-    idx_max_eff = df["EFFICIENCY"].idxmax()
+    df[speedup] = (baseline / df[metric]).round(3)
 
-    row_max_speedup = df.loc[idx_max_speedup]
-    row_max_eff = df.loc[idx_max_eff]
-    row_max_through = df.loc[df["THROUGHPUT_JS"].idxmax()]
+    df[efficiency] = (df[speedup] / df["TOT_WORKERS"]).round(3)
 
-    best_res[df_name] = {
-                "speedup": {
-                    "value": row_max_speedup["SPEEDUP"],
-                    "time": row_max_speedup["TIME_SEC"],
-                    "efficiency": row_max_speedup["EFFICIENCY"],
-                    "throughput": row_max_speedup["THROUGHPUT_JS"],
-                    "threads": int(row_max_speedup["OMP_THREADS"]),
-                },
-                "efficiency": {
-                    "value": row_max_eff["EFFICIENCY"],
-                    "time": row_max_eff["TIME_SEC"],
-                    "speedup": row_max_eff["SPEEDUP"],
-                    "throughput": row_max_eff["THROUGHPUT_JS"],
-                    "threads": int(row_max_eff["OMP_THREADS"]),
-                },
-                "throughput": {
-                    "value": row_max_through["THROUGHPUT_JS"],
-                    "time": row_max_through["TIME_SEC"],
-                    "speedup": row_max_through["SPEEDUP"],
-                    "efficiency": row_max_through["EFFICIENCY"],
-                    "threads": int(row_max_through["OMP_THREADS"]),
-                }
-            }
-    
+def extract_results(row, metric, kind):
+    speedup = f"{metric}_SPEEDUP"
+    efficiency = f"{metric}_EFFICIENCY"
 
-    match df_name:
-        case "pipe_mpi": 
-            best_res[df_name]["speedup"].update({
-                "mpi_ranks": int(row_max_speedup["MPI_RANKS"]),
-                "tot_workers": int(row_max_speedup["TOT_WORKERS"]),
-            })
+    if kind == "speedup":
+        return {
+            "value": row[speedup],
+            "time": row[metric],
+            "efficiency": row[efficiency],
+            "throughput": row["THROUGHPUT_JS"],
+            "threads": int(row["OMP_THREADS"]),
+        }
 
-            best_res[df_name]["efficiency"].update({
-                "mpi_ranks": int(row_max_eff["MPI_RANKS"]),
-                "tot_workers": int(row_max_eff["TOT_WORKERS"]),
-            })
+    elif kind == "efficiency":
+        return {
+            "value": row[efficiency],
+            "time": row[metric],
+            "speedup": row[speedup],
+            "throughput": row["THROUGHPUT_JS"],
+            "threads": int(row["OMP_THREADS"]),
+        }
 
-            best_res[df_name]["throughput"].update({
-                "mpi_ranks": int(row_max_through["MPI_RANKS"]),
-                "tot_workers": int(row_max_through["TOT_WORKERS"]),
-            })
+    else:
+        return {
+            "value": row["THROUGHPUT_JS"],
+            "time": row[metric],
+            "speedup": row[speedup],
+            "efficiency": row[efficiency],
+            "threads": int(row["OMP_THREADS"]),
+        }
 
-        case "pipe_mpi_cluster": 
-            best_res[df_name]["speedup"].update({
-                "mpi_ranks": int(row_max_speedup["MPI_RANKS"]),
-                "tot_workers": int(row_max_speedup["TOT_WORKERS"]),
-                "nodes": int(row_max_speedup["NODES"]),
-            })
-            best_res[df_name]["efficiency"].update({
-                "mpi_ranks": int(row_max_eff["MPI_RANKS"]),
-                "tot_workers": int(row_max_eff["TOT_WORKERS"]),
-                "nodes": int(row_max_eff["NODES"]),
-            })
-            best_res[df_name]["throughput"].update({
-                "mpi_ranks": int(row_max_through["MPI_RANKS"]),
-                "tot_workers": int(row_max_through["TOT_WORKERS"]),
-                "nodes": int(row_max_through["NODES"]),
-            })
+def add_mpi_info(result, row, df_name):
+    result["tot_workers"] = int(row["TOT_WORKERS"])
+    if "mpi" in df_name:
+        result["mpi_ranks"] = int(row["MPI_RANKS"])
+    if "cluster" in df_name:
+        result["nodes"] = int(row["NODES"])
+
+def evaluate_metrics(df: DataFrame, baseline, df_name):
+    results = {}
+    for name, metric in TIME_METRICS.items():
+        add_speedup_efficiency(df, baseline, metric)
+        best_speedup = df.loc[df[f"{metric}_SPEEDUP"].idxmax()]
+        best_efficiency = df.loc[df[f"{metric}_EFFICIENCY"].idxmax()]
+        best_throughput = df.loc[df["THROUGHPUT_JS"].idxmax()]
+
+        results[name] = {
+            "speedup": extract_results(best_speedup, metric, "speedup"),
+            "efficiency": extract_results(best_efficiency, metric, "efficiency"),
+            "throughput": extract_results(best_throughput, metric, "throughput"),
+        }
+
+        add_mpi_info(results[name]["speedup"], best_speedup, df_name)
+        add_mpi_info(results[name]["efficiency"], best_efficiency, df_name)
+        add_mpi_info(results[name]["throughput"], best_throughput, df_name)
+
+    return results
+
 def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, savepath:str):
     plt.figure()
     
@@ -106,7 +109,7 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
         label="Pipeline (OMP)"
     )
 
-    if coly == "SPEEDUP":
+    if "SPEEDUP" in coly:
         plt.plot(
             df2["TOT_WORKERS"],
             df2["TOT_WORKERS"],
@@ -134,7 +137,7 @@ def plot_heatmap(df, metric, title, savepath):
         index = "MPI_RANKS",
         columns = "OMP_THREADS",
         values = metric
-    ).sort_index().sort_index(axis=1)
+    )
 
     plt.figure()
     current_cmap = plt.get_cmap("viridis").copy()
@@ -223,18 +226,11 @@ if __name__ == "__main__":
     # # -------------- SPEEDUP, EFFICIENCY AND BEST RESULTS ------------------------
     
     best_res = {
-        "seq_omp": None,
-        "pipe": None,
-        "pipe_mpi": None,
-        "pipe_mpi_cluster": None,
+        "seq_omp": evaluate_metrics(seq_omp_mean, baseline, "seq_omp"),
+        "pipe": evaluate_metrics(pipe_mean, baseline, "pipe"),
+        "pipe_mpi": evaluate_metrics(pipe_mpi_mean, baseline, "pipe_mpi"),
+        "pipe_mpi_cluster": evaluate_metrics(pipe_mpi_cluster_mean, baseline, "pipe_mpi_cluster"),
     }
-
-    speedup_efficiency(seq_omp_mean, baseline, best_res, "seq_omp")
-    speedup_efficiency(pipe_mean, baseline, best_res, "pipe")
-    speedup_efficiency(pipe_mpi_mean, baseline, best_res, "pipe_mpi")
-    speedup_efficiency(pipe_mpi_cluster_mean, baseline, best_res, "pipe_mpi_cluster")
-
-    # print(json.dumps(best_res, indent=4, ensure_ascii=False))
 
     with open(f"{ANALYSIS_DIR}/best_results.json", "w") as f: 
         json.dump(best_res, f, indent=4)
@@ -244,50 +240,108 @@ if __name__ == "__main__":
     pipe_mean.to_csv(f"{METRICS_DIR}pipe_metrics.csv", index=False)
     pipe_mpi_mean.to_csv(f"{METRICS_DIR}pipe_mpi_metrics.csv", index=False)
     pipe_mpi_cluster_mean.to_csv(f"{METRICS_DIR}pipe_mpi_cluster_metrics.csv", index=False)
+
+    # -------------- COMPLETE WORKFLOW EVALUATION -----------------------------------------
     
     # -------------- METRICS PLOTS ------------------------
     
-    plot_metrics(seq_omp_mean, 
-                 pipe_mean, 
-                 colx="TOT_WORKERS", 
-                 coly="SPEEDUP", 
-                 title="Sequential OMP vs. Pipeline OMP Speedup", 
-                 xlabel="Total Workers (Threads)", 
-                 ylabel="Speedup", 
-                 savepath=f"{PLOTS_DIR}speedup.png")
+    # plot_metrics(seq_omp_mean, 
+    #              pipe_mean, 
+    #              colx="TOT_WORKERS", 
+    #              coly="SPEEDUP", 
+    #              title="Sequential OMP vs. Pipeline OMP Speedup", 
+    #              xlabel="Total Workers (Threads)", 
+    #              ylabel="Speedup", 
+    #              savepath=f"{PLOTS_DIR}speedup.png")
     
-    plot_metrics(seq_omp_mean, 
-                 pipe_mean, 
-                 colx="TOT_WORKERS", 
-                 coly="EFFICIENCY", 
-                 title="Sequential OMP vs. Pipeline OMP Efficiency", 
-                 xlabel="Total Workers (Threads)", 
-                 ylabel="Efficiency", 
-                 savepath=f"{PLOTS_DIR}efficiency.png")
+    # plot_metrics(seq_omp_mean, 
+    #              pipe_mean, 
+    #              colx="TOT_WORKERS", 
+    #              coly="EFFICIENCY", 
+    #              title="Sequential OMP vs. Pipeline OMP Efficiency", 
+    #              xlabel="Total Workers (Threads)", 
+    #              ylabel="Efficiency", 
+    #              savepath=f"{PLOTS_DIR}efficiency.png")
     
-    plot_metrics(seq_omp_mean, 
-                 pipe_mean, 
-                 colx="TOT_WORKERS", 
-                 coly="THROUGHPUT_JS", 
-                 title="Sequential OMP vs. Pipeline OMP Throughput", 
-                 xlabel="Total Workers (Threads)", 
-                 ylabel="Throughput (job/s)", 
-                 savepath=f"{PLOTS_DIR}throughput_scaling.png")
+    # plot_metrics(seq_omp_mean, 
+    #              pipe_mean, 
+    #              colx="TOT_WORKERS", 
+    #              coly="THROUGHPUT_JS", 
+    #              title="Sequential OMP vs. Pipeline OMP Throughput", 
+    #              xlabel="Total Workers (Threads)", 
+    #              ylabel="Throughput (job/s)", 
+    #              savepath=f"{PLOTS_DIR}throughput_scaling.png")
+
+    # # # -------------- MPI + OPENMP HEATMAP ------------------------
+
+    # plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_speedup.png")
+    # plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_eff.png")
+    # plot_heatmap(pipe_mpi_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_through.png")
+
+    # plot_iso_mpi(pipe_mpi_mean, "SPEEDUP", "OMP+MPI Speedup (1 node)", f"{PLOTS_DIR}/mpi_local/speedup.png")
+    # plot_iso_mpi(pipe_mpi_mean, "EFFICIENCY", "OMP+MPI Efficiency (1 node)", f"{PLOTS_DIR}/mpi_local/efficiency.png")
+    # plot_iso_mpi(pipe_mpi_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (1 node)", f"{PLOTS_DIR}/mpi_local/throughput.png")
+
+    # plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_speedup.png")
+    # plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_eff.png")
+    # plot_heatmap(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_through.png")
+
+    # plot_iso_mpi(pipe_mpi_cluster_mean, "SPEEDUP", "OMP+MPI Speedup (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/speedup.png")
+    # plot_iso_mpi(pipe_mpi_cluster_mean, "EFFICIENCY", "OMP+MPI Efficiency (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/efficiency.png")
+    # plot_iso_mpi(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/throughput.png")
+
+# ---------------------- STAGES EVALUATION ---------------------------- 
+
+    # plot_metrics(seq_omp_mean, 
+    #              pipe_mean, 
+    #              colx="TOT_WORKERS", 
+    #              coly="KEYGEN_SEC_SPEEDUP", 
+    #              title="Sequential OMP vs. Pipeline OMP Keygen Speedup", 
+    #              xlabel="Total Workers (Threads)", 
+    #              ylabel="Speedup", 
+    #              savepath=f"{PLOTS_DIR}keygen_speedup.png")
+
+    # plot_metrics(seq_omp_mean, 
+    #             pipe_mean, 
+    #             colx="TOT_WORKERS", 
+    #             coly="ENC_SEC_SPEEDUP", 
+    #             title="Sequential OMP vs. Pipeline OMP Encapsulation Speedup", 
+    #             xlabel="Total Workers (Threads)", 
+    #             ylabel="Speedup", 
+    #             savepath=f"{PLOTS_DIR}enc_speedup.png")
     
-    # # -------------- MPI + OPENMP HEATMAP ------------------------
+    # plot_metrics(seq_omp_mean, 
+    #             pipe_mean, 
+    #             colx="TOT_WORKERS", 
+    #             coly="DEC_SEC_SPEEDUP", 
+    #             title="Sequential OMP vs. Pipeline OMP Decapsulation Speedup", 
+    #             xlabel="Total Workers (Threads)", 
+    #             ylabel="Speedup", 
+    #             savepath=f"{PLOTS_DIR}dec_speedup.png")
+    
+    # plot_metrics(seq_omp_mean, 
+    #              pipe_mean, 
+    #              colx="TOT_WORKERS", 
+    #              coly="KEYGEN_SEC_EFFICIENCY", 
+    #              title="Sequential OMP vs. Pipeline OMP Keygen Efficiency", 
+    #              xlabel="Total Workers (Threads)", 
+    #              ylabel="Efficiency", 
+    #              savepath=f"{PLOTS_DIR}keygen_efficiency.png")
 
-    plot_heatmap(pipe_mpi_mean, "SPEEDUP", "MPI+OMP Speedup (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_speedup.png")
-    plot_heatmap(pipe_mpi_mean, "EFFICIENCY", "MPI+OMP Efficiency (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_eff.png")
-    plot_heatmap(pipe_mpi_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (1 node)", f"{PLOTS_DIR}/mpi_local/heatmap_through.png")
-
-    plot_iso_mpi(pipe_mpi_mean, "SPEEDUP", "OMP+MPI Speedup (1 node)", f"{PLOTS_DIR}/mpi_local/speedup.png")
-    plot_iso_mpi(pipe_mpi_mean, "EFFICIENCY", "OMP+MPI Efficiency (1 node)", f"{PLOTS_DIR}/mpi_local/efficiency.png")
-    plot_iso_mpi(pipe_mpi_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (1 node)", f"{PLOTS_DIR}/mpi_local/throughput.png")
-
-    plot_heatmap(pipe_mpi_cluster_mean, "SPEEDUP", "MPI+OMP Speedup (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_speedup.png")
-    plot_heatmap(pipe_mpi_cluster_mean, "EFFICIENCY", "MPI+OMP Efficiency (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_eff.png")
-    plot_heatmap(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "MPI+OMP Throughput (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/heatmap_through.png")
-
-    plot_iso_mpi(pipe_mpi_cluster_mean, "SPEEDUP", "OMP+MPI Speedup (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/speedup.png")
-    plot_iso_mpi(pipe_mpi_cluster_mean, "EFFICIENCY", "OMP+MPI Efficiency (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/efficiency.png")
-    plot_iso_mpi(pipe_mpi_cluster_mean, "THROUGHPUT_JS", "OMP+MPI Throughput (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/throughput.png")
+    # plot_metrics(seq_omp_mean, 
+    #             pipe_mean, 
+    #             colx="TOT_WORKERS", 
+    #             coly="ENC_SEC_EFFICIENCY", 
+    #             title="Sequential OMP vs. Pipeline OMP Encapsulation Efficiency", 
+    #             xlabel="Total Workers (Threads)", 
+    #             ylabel="Efficiency", 
+    #             savepath=f"{PLOTS_DIR}enc_efficiency.png")
+    
+    # plot_metrics(seq_omp_mean, 
+    #             pipe_mean, 
+    #             colx="TOT_WORKERS", 
+    #             coly="DEC_SEC_EFFICIENCY", 
+    #             title="Sequential OMP vs. Pipeline OMP Decapsulation Efficiency", 
+    #             xlabel="Total Workers (Threads)", 
+    #             ylabel="Efficiency", 
+    #             savepath=f"{PLOTS_DIR}dec_efficiency.png")
