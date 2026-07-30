@@ -7,88 +7,83 @@ import json
 import seaborn as sns
 
 N_JOBS = 100000
-REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
-ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
+# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
+# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
-# REPORT_DIR = f"./report_out/flto_O3/no_bind/"
-# ANALYSIS_DIR = f"./analysis/flto_O3/no_bind/"
+REPORT_DIR = f"./report_out/flto_O3/no_bind/"
+ANALYSIS_DIR = f"./analysis/flto_O3/no_bind/"
 
 PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
 METRICS_DIR = f"{ANALYSIS_DIR}metrics/"
-OPT_DIR = f"{ANALYSIS_DIR}"
 
 def preprocess_dataframe(df:DataFrame, groupby_cols:list):
     return df.groupby(groupby_cols, as_index=False).agg(TIME_SEC=("TIME_SEC", "median"), THROUGHPUT_JS=("THROUGHPUT_JS", "median")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
 
-def speedup_efficiency(df: DataFrame, baseline, best_res, df_name):
-    df["SPEEDUP"] = (baseline / df["TIME_SEC"]).round(3)
-    df["EFFICIENCY"] = (df["SPEEDUP"] / df["TOT_WORKERS"]).round(3)
+def add_speedup_efficiency(df: DataFrame, baseline):
+    speedup = "SPEEDUP"
+    efficiency = "EFFICIENCY"
 
-    idx_max_speedup = df["SPEEDUP"].idxmax()
-    idx_max_eff = df["EFFICIENCY"].idxmax()
+    df[speedup] = (baseline / df["TIME_SEC"]).round(3)
 
-    row_max_speedup = df.loc[idx_max_speedup]
-    row_max_eff = df.loc[idx_max_eff]
-    row_max_through = df.loc[df["THROUGHPUT_JS"].idxmax()]
+    df[efficiency] = (df[speedup] / df["TOT_WORKERS"]).round(3)
 
-    best_res[df_name] = {
-                "speedup": {
-                    "value": row_max_speedup["SPEEDUP"],
-                    "time": row_max_speedup["TIME_SEC"],
-                    "efficiency": row_max_speedup["EFFICIENCY"],
-                    "throughput": row_max_speedup["THROUGHPUT_JS"],
-                    "threads": int(row_max_speedup["OMP_THREADS"]),
-                },
-                "efficiency": {
-                    "value": row_max_eff["EFFICIENCY"],
-                    "time": row_max_eff["TIME_SEC"],
-                    "speedup": row_max_eff["SPEEDUP"],
-                    "throughput": row_max_eff["THROUGHPUT_JS"],
-                    "threads": int(row_max_eff["OMP_THREADS"]),
-                },
-                "throughput": {
-                    "value": row_max_through["THROUGHPUT_JS"],
-                    "time": row_max_through["TIME_SEC"],
-                    "speedup": row_max_through["SPEEDUP"],
-                    "efficiency": row_max_through["EFFICIENCY"],
-                    "threads": int(row_max_through["OMP_THREADS"]),
-                }
-            }
-    
+def extract_results(row, kind):
 
-    match df_name:
-        case "pipe_mpi": 
-            best_res[df_name]["speedup"].update({
-                "mpi_ranks": int(row_max_speedup["MPI_RANKS"]),
-                "tot_workers": int(row_max_speedup["TOT_WORKERS"]),
-            })
+    if kind == "speedup":
+        return {
+            "value": row["SPEEDUP"],
+            "time": row["TIME_SEC"],
+            "efficiency": row["EFFICIENCY"],
+            "throughput": row["THROUGHPUT_JS"],
+            "threads": int(row["OMP_THREADS"]),
+        }
 
-            best_res[df_name]["efficiency"].update({
-                "mpi_ranks": int(row_max_eff["MPI_RANKS"]),
-                "tot_workers": int(row_max_eff["TOT_WORKERS"]),
-            })
+    elif kind == "efficiency":
+        return {
+            "value": row["EFFICIENCY"],
+            "time": row["TIME_SEC"],
+            "speedup": row["SPEEDUP"],
+            "throughput": row["THROUGHPUT_JS"],
+            "threads": int(row["OMP_THREADS"]),
+        }
 
-            best_res[df_name]["throughput"].update({
-                "mpi_ranks": int(row_max_through["MPI_RANKS"]),
-                "tot_workers": int(row_max_through["TOT_WORKERS"]),
-            })
+    else:
+        return {
+            "value": row["THROUGHPUT_JS"],
+            "time": row["TIME_SEC"],
+            "speedup": row["SPEEDUP"],
+            "efficiency": row["EFFICIENCY"],
+            "threads": int(row["OMP_THREADS"]),
+        }
 
-        case "pipe_mpi_cluster": 
-            best_res[df_name]["speedup"].update({
-                "mpi_ranks": int(row_max_speedup["MPI_RANKS"]),
-                "tot_workers": int(row_max_speedup["TOT_WORKERS"]),
-                "nodes": int(row_max_speedup["NODES"]),
-            })
-            best_res[df_name]["efficiency"].update({
-                "mpi_ranks": int(row_max_eff["MPI_RANKS"]),
-                "tot_workers": int(row_max_eff["TOT_WORKERS"]),
-                "nodes": int(row_max_eff["NODES"]),
-            })
-            best_res[df_name]["throughput"].update({
-                "mpi_ranks": int(row_max_through["MPI_RANKS"]),
-                "tot_workers": int(row_max_through["TOT_WORKERS"]),
-                "nodes": int(row_max_through["NODES"]),
-            })
+def add_mpi_info(result, row, df_name):
+    if "mpi" in df_name:
+        result["mpi_ranks"] = int(row["MPI_RANKS"])
+        result["tot_workers"] = int(row["TOT_WORKERS"])
+    if "cluster" in df_name:
+        result["nodes"] = int(row["NODES"])
+        result["tot_workers"] = int(row["TOT_WORKERS"])
+
+def evaluate_metrics(df: DataFrame, baseline, df_name):
+    results = {}
+
+    add_speedup_efficiency(df, baseline)
+    best_speedup = df.loc[df["SPEEDUP"].idxmax()]
+    best_efficiency = df.loc[df["EFFICIENCY"].idxmax()]
+    best_throughput = df.loc[df["THROUGHPUT_JS"].idxmax()]
+
+    results = {
+        "speedup": extract_results(best_speedup, "speedup"),
+        "efficiency": extract_results(best_efficiency, "efficiency"),
+        "throughput": extract_results(best_throughput, "throughput"),
+    }
+
+    add_mpi_info(results["speedup"], best_speedup, df_name)
+    add_mpi_info(results["efficiency"], best_efficiency, df_name)
+    add_mpi_info(results["throughput"], best_throughput, df_name)
+
+    return results
+
 def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, savepath:str):
     plt.figure()
     
@@ -106,7 +101,7 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
         label="Pipeline (OMP)"
     )
 
-    if coly == "SPEEDUP":
+    if "SPEEDUP" in coly:
         plt.plot(
             df2["TOT_WORKERS"],
             df2["TOT_WORKERS"],
@@ -134,7 +129,7 @@ def plot_heatmap(df, metric, title, savepath):
         index = "MPI_RANKS",
         columns = "OMP_THREADS",
         values = metric
-    ).sort_index().sort_index(axis=1)
+    )
 
     plt.figure()
     current_cmap = plt.get_cmap("viridis").copy()
@@ -223,18 +218,11 @@ if __name__ == "__main__":
     # # -------------- SPEEDUP, EFFICIENCY AND BEST RESULTS ------------------------
     
     best_res = {
-        "seq_omp": None,
-        "pipe": None,
-        "pipe_mpi": None,
-        "pipe_mpi_cluster": None,
+        "seq_omp": evaluate_metrics(seq_omp_mean, baseline, "seq_omp"),
+        "pipe": evaluate_metrics(pipe_mean, baseline, "pipe"),
+        "pipe_mpi": evaluate_metrics(pipe_mpi_mean, baseline, "pipe_mpi"),
+        "pipe_mpi_cluster": evaluate_metrics(pipe_mpi_cluster_mean, baseline, "pipe_mpi_cluster"),
     }
-
-    speedup_efficiency(seq_omp_mean, baseline, best_res, "seq_omp")
-    speedup_efficiency(pipe_mean, baseline, best_res, "pipe")
-    speedup_efficiency(pipe_mpi_mean, baseline, best_res, "pipe_mpi")
-    speedup_efficiency(pipe_mpi_cluster_mean, baseline, best_res, "pipe_mpi_cluster")
-
-    # print(json.dumps(best_res, indent=4, ensure_ascii=False))
 
     with open(f"{ANALYSIS_DIR}/best_results.json", "w") as f: 
         json.dump(best_res, f, indent=4)
