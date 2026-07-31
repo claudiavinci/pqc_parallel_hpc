@@ -22,4 +22,10 @@ typedef struct {
     // int status;
 } kem_job;
 
+typedef struct {
+    double keygen_time;
+    double enc_time;
+    double dec_time;
+} kem_timing;
+
 #endif /* COMMON_H */

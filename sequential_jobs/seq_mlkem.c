@@ -23,6 +23,7 @@ int run_kem_job(kem_job *job, double *keygen_sec, double *enc_sec, double *dec_s
     clock_gettime(CLOCK_MONOTONIC, &t0); // Prendo il tempo di inizio
     PQCLEAN_MLKEM768_CLEAN_crypto_kem_keypair(job->pk, job->sk);
     clock_gettime(CLOCK_MONOTONIC, &t1); // Prendo il tempo di fine
+
     *keygen_sec += (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
 
     clock_gettime(CLOCK_MONOTONIC, &t0); // Prendo il tempo di inizio
@@ -52,10 +53,10 @@ int main(int argc, char *argv[]) {
     double enc_sec = 0.0;
     double dec_sec = 0.0;
     struct timespec t0, t1;
-    clock_gettime(CLOCK_MONOTONIC, &t0); // Prendo il tempo di inizio
+    timespec_get(&t0, TIME_UTC); // Prendo il tempo di inizio
 
     for (int i = 0; i < N_JOBS; i++) {
-        kem_job job;
+        static kem_job job;
         
         int status = run_kem_job(&job, &keygen_sec, &enc_sec, &dec_sec);
         
@@ -63,7 +64,7 @@ int main(int argc, char *argv[]) {
             global_success++;
         }
     }
-    clock_gettime(CLOCK_MONOTONIC, &t1); // Prendo il tempo di fine
+    timespec_get(&t1, TIME_UTC); // Prendo il tempo di fine
     double elapsed_time = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
     
     // Stampa dei risultati

@@ -1,9 +1,9 @@
 CC=gcc
 MPICC=mpicc
 
-CFLAGS=-O2
-# CFLAGS=-O3 -flto
-# LDFLAGS=-flto
+# CFLAGS=-O2
+CFLAGS=-O3 -flto
+LDFLAGS=-flto
 OMPFLAGS=-fopenmp
 
 HOSTFILE ?= hosts.txt
@@ -23,20 +23,20 @@ PIPE_MPI=pipeline/pipeline_mpi_mlkem
 all: seq seq_omp pipe pipe_mpi
 
 seq:
-# 	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) $(LDFLAGS) -o $(SEQ)
-	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) -o $(SEQ)
+	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) $(LDFLAGS) -o $(SEQ)
+# 	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) -o $(SEQ)
 
 seq_omp:
-# 	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(SEQ_OMP)
-	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(SEQ_OMP)
+	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(SEQ_OMP)
+# 	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(SEQ_OMP)
 
 pipe:
-# 	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE)
-	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE)
+	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE)
+# 	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE)
 
 pipe_mpi:
-# 	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mpi_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE_MPI)
-	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mpi_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE_MPI)
+	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mpi_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE_MPI)
+# 	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mpi_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE_MPI)
 
 # -------------- RUN SEQUENTIAL ----------
 
@@ -115,6 +115,12 @@ run_all_tests:
 	$(MAKE) run_all_pipe
 	$(MAKE) run_all_mpi_local
 	$(MAKE) run_all_mpi_cluster	
+
+run_all_local_tests:
+	$(MAKE) run_seq
+	$(MAKE) run_all_seq_omp
+	$(MAKE) run_all_pipe
+	$(MAKE) run_all_mpi_local
 
 clean:
 	rm -f $(SEQ) $(SEQ_OMP) $(PIPE) $(PIPE_MPI)
