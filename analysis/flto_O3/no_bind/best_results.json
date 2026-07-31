@@ -1,0 +1,339 @@
+{
+    "seq_omp": {
+        "TOTAL": {
+            "speedup": {
+                "value": 1.108,
+                "time": 14.656,
+                "efficiency": 0.369,
+                "throughput": 6823.271,
+                "threads": 3
+            },
+            "efficiency": {
+                "value": 0.495,
+                "time": 16.407,
+                "speedup": 0.99,
+                "throughput": 6094.859,
+                "threads": 2
+            },
+            "throughput": {
+                "value": 6823.271,
+                "time": 14.656,
+                "speedup": 1.108,
+                "efficiency": 0.369,
+                "threads": 3
+            }
+        },
+        "KEYGEN": {
+            "speedup": {
+                "value": 4.052,
+                "time": 4.009,
+                "efficiency": 1.351,
+                "throughput": 6823.271,
+                "threads": 3
+            },
+            "efficiency": {
+                "value": 1.746,
+                "time": 4.651,
+                "speedup": 3.492,
+                "throughput": 6094.859,
+                "threads": 2
+            }
+        },
+        "ENC": {
+            "speedup": {
+                "value": 3.442,
+                "time": 4.719,
+                "efficiency": 1.147,
+                "throughput": 6823.271,
+                "threads": 3
+            },
+            "efficiency": {
+                "value": 1.53,
+                "time": 5.307,
+                "speedup": 3.061,
+                "throughput": 6094.859,
+                "threads": 2
+            }
+        },
+        "DEC": {
+            "speedup": {
+                "value": 2.746,
+                "time": 5.916,
+                "efficiency": 0.915,
+                "throughput": 6823.271,
+                "threads": 3
+            },
+            "efficiency": {
+                "value": 1.26,
+                "time": 6.444,
+                "speedup": 2.521,
+                "throughput": 6094.859,
+                "threads": 2
+            }
+        }
+    },
+    "pipe": {
+        "TOTAL": {
+            "speedup": {
+                "value": 3.41,
+                "time": 4.763,
+                "efficiency": 0.426,
+                "throughput": 20994.916,
+                "threads": 8
+            },
+            "efficiency": {
+                "value": 0.676,
+                "time": 12.008,
+                "speedup": 1.353,
+                "throughput": 8328.217,
+                "threads": 2
+            },
+            "throughput": {
+                "value": 20994.916,
+                "time": 4.763,
+                "speedup": 3.41,
+                "efficiency": 0.426,
+                "threads": 8
+            }
+        },
+        "KEYGEN": {
+            "speedup": {
+                "value": 2.265,
+                "time": 7.172,
+                "efficiency": 1.132,
+                "throughput": 8328.217,
+                "threads": 2
+            },
+            "efficiency": {
+                "value": 1.132,
+                "time": 7.172,
+                "speedup": 2.265,
+                "throughput": 8328.217,
+                "threads": 2
+            }
+        },
+        "ENC": {
+            "speedup": {
+                "value": 2.163,
+                "time": 7.51,
+                "efficiency": 1.082,
+                "throughput": 8328.217,
+                "threads": 2
+            },
+            "efficiency": {
+                "value": 1.082,
+                "time": 7.51,
+                "speedup": 2.163,
+                "throughput": 8328.217,
+                "threads": 2
+            }
+        },
+        "DEC": {
+            "speedup": {
+                "value": 1.884,
+                "time": 8.62,
+                "efficiency": 0.942,
+                "throughput": 8328.217,
+                "threads": 2
+            },
+            "efficiency": {
+                "value": 0.942,
+                "time": 8.62,
+                "speedup": 1.884,
+                "throughput": 8328.217,
+                "threads": 2
+            }
+        }
+    },
+    "pipe_mpi": {
+        "TOTAL": {
+            "speedup": {
+                "value": 3.533,
+                "time": 4.597,
+                "efficiency": 0.442,
+                "throughput": 21752.446,
+                "threads": 2,
+                "mpi_ranks": 4,
+                "tot_workers": 8
+            },
+            "efficiency": {
+                "value": 0.566,
+                "time": 7.176,
+                "speedup": 2.264,
+                "throughput": 13935.642,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4
+            },
+            "throughput": {
+                "value": 21752.446,
+                "time": 4.597,
+                "speedup": 3.533,
+                "efficiency": 0.442,
+                "threads": 2,
+                "mpi_ranks": 4,
+                "tot_workers": 8
+            }
+        },
+        "KEYGEN": {
+            "speedup": {
+                "value": 1.897,
+                "time": 8.563,
+                "efficiency": 0.474,
+                "throughput": 13935.642,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4
+            },
+            "efficiency": {
+                "value": 0.474,
+                "time": 8.563,
+                "speedup": 1.897,
+                "throughput": 13935.642,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4
+            }
+        },
+        "ENC": {
+            "speedup": {
+                "value": 1.798,
+                "time": 9.032,
+                "efficiency": 0.45,
+                "throughput": 13935.642,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4
+            },
+            "efficiency": {
+                "value": 0.45,
+                "time": 9.032,
+                "speedup": 1.798,
+                "throughput": 13935.642,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4
+            }
+        },
+        "DEC": {
+            "speedup": {
+                "value": 1.552,
+                "time": 10.464,
+                "efficiency": 0.388,
+                "throughput": 13935.642,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4
+            },
+            "efficiency": {
+                "value": 0.388,
+                "time": 10.464,
+                "speedup": 1.552,
+                "throughput": 13935.642,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4
+            }
+        }
+    },
+    "pipe_mpi_cluster": {
+        "TOTAL": {
+            "speedup": {
+                "value": 6.174,
+                "time": 2.631,
+                "efficiency": 0.386,
+                "throughput": 38013.998,
+                "threads": 2,
+                "mpi_ranks": 8,
+                "tot_workers": 16,
+                "nodes": 2
+            },
+            "efficiency": {
+                "value": 0.73,
+                "time": 5.561,
+                "speedup": 2.921,
+                "throughput": 17982.793,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4,
+                "nodes": 2
+            },
+            "throughput": {
+                "value": 38013.998,
+                "time": 2.631,
+                "speedup": 6.174,
+                "efficiency": 0.386,
+                "threads": 2,
+                "mpi_ranks": 8,
+                "tot_workers": 16,
+                "nodes": 2
+            }
+        },
+        "KEYGEN": {
+            "speedup": {
+                "value": 2.748,
+                "time": 5.911,
+                "efficiency": 0.687,
+                "throughput": 17982.793,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4,
+                "nodes": 2
+            },
+            "efficiency": {
+                "value": 0.687,
+                "time": 5.911,
+                "speedup": 2.748,
+                "throughput": 17982.793,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4,
+                "nodes": 2
+            }
+        },
+        "ENC": {
+            "speedup": {
+                "value": 2.604,
+                "time": 6.238,
+                "efficiency": 0.651,
+                "throughput": 17982.793,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4,
+                "nodes": 2
+            },
+            "efficiency": {
+                "value": 0.651,
+                "time": 6.238,
+                "speedup": 2.604,
+                "throughput": 17982.793,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4,
+                "nodes": 2
+            }
+        },
+        "DEC": {
+            "speedup": {
+                "value": 2.232,
+                "time": 7.276,
+                "efficiency": 0.558,
+                "throughput": 17982.793,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4,
+                "nodes": 2
+            },
+            "efficiency": {
+                "value": 0.558,
+                "time": 7.276,
+                "speedup": 2.232,
+                "throughput": 17982.793,
+                "threads": 2,
+                "mpi_ranks": 2,
+                "tot_workers": 4,
+                "nodes": 2
+            }
+        }
+    }
+}
