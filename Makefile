@@ -110,7 +110,13 @@ run_all_tests:
 	$(MAKE) run_all_seq_omp
 	$(MAKE) run_all_pipe
 	$(MAKE) run_all_mpi_local
-	$(MAKE) run_all_mpi_cluster	
+	$(MAKE) run_all_mpi_cluster
+
+run_all_local_tests:
+	$(MAKE) run_seq
+	$(MAKE) run_all_seq_omp
+	$(MAKE) run_all_pipe
+	$(MAKE) run_all_mpi_local
 
 clean:
 	rm -f $(SEQ) $(SEQ_OMP) $(PIPE) $(PIPE_MPI)

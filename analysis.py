@@ -129,7 +129,7 @@ def plot_heatmap(df, metric, title, savepath):
         index = "MPI_RANKS",
         columns = "OMP_THREADS",
         values = metric
-    )
+    ).sort_index(axis=1)
 
     plt.figure()
     current_cmap = plt.get_cmap("viridis").copy()
