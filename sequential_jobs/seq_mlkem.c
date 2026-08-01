@@ -53,7 +53,7 @@ int main(int argc, char *argv[]) {
     double enc_sec = 0.0;
     double dec_sec = 0.0;
     struct timespec t0, t1;
-    timespec_get(&t0, TIME_UTC); // Prendo il tempo di inizio
+    clock_gettime(CLOCK_MONOTONIC, &t0); // Prendo il tempo di inizio
 
     for (int i = 0; i < N_JOBS; i++) {
         static kem_job job;
@@ -64,7 +64,7 @@ int main(int argc, char *argv[]) {
             global_success++;
         }
     }
-    timespec_get(&t1, TIME_UTC); // Prendo il tempo di fine
+    clock_gettime(CLOCK_MONOTONIC, &t1); // Prendo il tempo di fine
     double elapsed_time = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
     
     // Stampa dei risultati
