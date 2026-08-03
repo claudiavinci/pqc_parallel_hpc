@@ -10,7 +10,7 @@ HOSTFILE ?= hosts.txt
 NODES ?= 2
 
 # Runtime OpenMP
-OMP_PROC_BIND ?= spread
+OMP_PROC_BIND ?= false
 OMP_PLACES ?= cores
 # --------- INCLUDE -------------
 COMMON_INC=-I common
