@@ -1,9 +1,9 @@
 CC=gcc
 MPICC=mpicc
 
-# CFLAGS=-O2
-CFLAGS=-O3 -flto
-LDFLAGS=-flto
+CFLAGS=-O2
+# CFLAGS=-O3 -flto
+# LDFLAGS=-flto
 OMPFLAGS=-fopenmp
 
 HOSTFILE ?= hosts.txt
@@ -27,16 +27,20 @@ PIPE_MPI=pipeline/pipeline_mpi_mlkem
 all: seq seq_omp pipe pipe_mpi
 
 seq:
-	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) $(LDFLAGS) -o $(SEQ)
+# 	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) $(LDFLAGS) -o $(SEQ)
+	$(CC) $(CFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768/*.c common/*.c $(INC_SEQ) $(COMMON_INC) -o $(SEQ)
 
 seq_omp:
-	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(SEQ_OMP)
+# 	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(SEQ_OMP)
+	$(CC) $(CFLAGS) $(OMPFLAGS) sequential_jobs/seq_mlkem.c report/report.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(SEQ_OMP)
 
 pipe:
-	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE)
+# 	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE)
+	$(CC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE)
 
 pipe_mpi:
-	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mpi_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE_MPI)
+# 	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mpi_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) $(LDFLAGS) -o $(PIPE_MPI)
+	$(MPICC) $(CFLAGS) $(OMPFLAGS) pipeline/pipeline_mpi_mlkem.c report/report.c pipeline/pipeline.c ml-kem-768-omp/*.c common/*.c $(INC_OMP) $(COMMON_INC) -o $(PIPE_MPI)
 
 # -------------- RUN SEQUENTIAL ----------
 
@@ -49,6 +53,7 @@ run_seq_omp:
 	@for i in $$(seq 1 10); do \
 		OMP_NUM_THREADS=$(THREADS) \
 		OMP_PROC_BIND=$(OMP_PROC_BIND) \
+		OMP_PLACES=$(OMP_PLACES) \
 		./$(SEQ_OMP); \
 	done
 
@@ -65,6 +70,8 @@ run_all_seq_omp:
 run_pipe:
 	@for i in $$(seq 1 10); do \
 		OMP_NUM_THREADS=$(THREADS) \
+		OMP_PROC_BIND=$(OMP_PROC_BIND) \
+		OMP_PLACES=$(OMP_PLACES) \
 		./$(PIPE); \
 	done
 
@@ -82,6 +89,8 @@ run_mpi_local:
 	@for i in $$(seq 1 10); do \
     	mpiexec -n $(NP) \
 			-genv OMP_NUM_THREADS $(THREADS) \
+			-genv OMP_PROC_BIND=$(OMP_PROC_BIND) \
+			-genv OMP_PLACES=$(OMP_PLACES) \
 			./$(PIPE_MPI); \
 	done
 
@@ -102,7 +111,7 @@ run_all_mpi_local:
 
 run_mpi_cluster:
 	@for i in $$(seq 1 10); do \
-		mpiexec -f $(HOSTFILE) -n $(NP) -env OMP_NUM_THREADS $(THREADS) -env OMP_PROC_BIND=$(OMP_PROC_BIND) ./$(PIPE_MPI) $(NODES); \
+		mpiexec -f $(HOSTFILE) -n $(NP) -env OMP_NUM_THREADS $(THREADS) -env OMP_PROC_BIND=$(OMP_PROC_BIND) -env OMP_PLACES=$(OMP_PLACES) ./$(PIPE_MPI) $(NODES); \
 	done
 
 run_all_mpi_cluster:
