@@ -10,8 +10,8 @@ N_JOBS = 100000
 REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
 ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
-# REPORT_DIR = f"./report_out/flto_O3/no_bind/"
-# ANALYSIS_DIR = f"./analysis/flto_O3/no_bind/"
+REPORT_DIR = f"./report_out/flto_O3/"
+ANALYSIS_DIR = f"./analysis/flto_O3/"
 
 PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
 METRICS_DIR = f"{ANALYSIS_DIR}metrics/"
@@ -75,10 +75,10 @@ def add_mpi_info(result, row, df_name):
         result["tot_workers"] = int(row["TOT_WORKERS"])
 
 
-def evaluate_metrics(df: DataFrame, baseline, df_name):
+def evaluate_metrics(df: DataFrame, baselines, df_name):
     results = {}
     for name, metric in TIME_METRICS.items():
-        add_speedup_efficiency(df, baseline, metric, name)
+        add_speedup_efficiency(df, baselines[name], metric, name)
         best_speedup = df.loc[df[f"{name}_SPEEDUP"].idxmax()]
         best_efficiency = df.loc[df[f"{name}_EFFICIENCY"].idxmax()]
 
@@ -257,6 +257,15 @@ if __name__ == "__main__":
 
     seq_df = pd.read_csv(f"{REPORT_DIR}/seq_mlkem_results.csv")
     baseline = seq_df[seq_df["OMP_ENABLED"] == 0]["TIME_SEC"].mean().round(3)
+    keygen_baseline = seq_df[seq_df["OMP_ENABLED"] == 0]["KEYGEN_SEC"].mean().round(3)
+    enc_baseline = seq_df[seq_df["OMP_ENABLED"] == 0]["ENC_SEC"].mean().round(3)
+    dec_baseline = seq_df[seq_df["OMP_ENABLED"] == 0]["DEC_SEC"].mean().round(3)
+    baselines = {
+        'TOTAL': baseline,
+        'KEYGEN': keygen_baseline,
+        'ENC': enc_baseline,
+        'DEC': dec_baseline
+    }
     seq_omp_df = seq_df[seq_df["OMP_ENABLED"] == 1].copy().reset_index(drop=True)
 
     pipe_df = pd.read_csv(f"{REPORT_DIR}/pipeline_results.csv")
@@ -275,10 +284,10 @@ if __name__ == "__main__":
     # # -------------- SPEEDUP, EFFICIENCY AND BEST RESULTS ------------------------
     
     best_res = {
-        "seq_omp": evaluate_metrics(seq_omp_mean, baseline, "seq_omp"),
-        "pipe": evaluate_metrics(pipe_mean, baseline, "pipe"),
-        "pipe_mpi": evaluate_metrics(pipe_mpi_mean, baseline, "pipe_mpi"),
-        "pipe_mpi_cluster": evaluate_metrics(pipe_mpi_cluster_mean, baseline, "pipe_mpi_cluster"),
+        "seq_omp": evaluate_metrics(seq_omp_mean, baselines, "seq_omp"),
+        "pipe": evaluate_metrics(pipe_mean, baselines, "pipe"),
+        "pipe_mpi": evaluate_metrics(pipe_mpi_mean, baselines, "pipe_mpi"),
+        "pipe_mpi_cluster": evaluate_metrics(pipe_mpi_cluster_mean, baselines, "pipe_mpi_cluster"),
     }
 
     with open(f"{ANALYSIS_DIR}/best_results.json", "w") as f: 

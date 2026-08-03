@@ -8,6 +8,10 @@ OMPFLAGS=-fopenmp
 
 HOSTFILE ?= hosts.txt
 NODES ?= 2
+
+# Runtime OpenMP
+OMP_PROC_BIND ?= false
+OMP_PLACES ?= cores
 # --------- INCLUDE -------------
 COMMON_INC=-I common
 INC_SEQ=-I ml-kem-768
@@ -47,26 +51,36 @@ run_seq:
 
 run_seq_omp:
 	@for i in $$(seq 1 10); do \
-		OMP_NUM_THREADS=$(THREADS) ./$(SEQ_OMP); \
+		OMP_NUM_THREADS=$(THREADS) \
+		OMP_PROC_BIND=$(OMP_PROC_BIND) \
+		OMP_PLACES=$(OMP_PLACES) \
+		./$(SEQ_OMP); \
 	done
 
 run_all_seq_omp:
 	@for omp in 2 3 4 5 8; do \
 		for i in $$(seq 1 10); do \
 			OMP_NUM_THREADS=$$omp \
+			OMP_PROC_BIND=$(OMP_PROC_BIND) \
+			OMP_PLACES=$(OMP_PLACES) \
 			./$(SEQ_OMP); \
 		done \
 	done
 
 run_pipe:
 	@for i in $$(seq 1 10); do \
-		OMP_NUM_THREADS=$(THREADS) ./$(PIPE); \
+		OMP_NUM_THREADS=$(THREADS) \
+		OMP_PROC_BIND=$(OMP_PROC_BIND) \
+		OMP_PLACES=$(OMP_PLACES) \
+		./$(PIPE); \
 	done
 
 run_all_pipe:
 	@for omp in 2 3 4 5 8; do \
 		for i in $$(seq 1 10); do \
 			OMP_NUM_THREADS=$$omp \
+			OMP_PROC_BIND=$(OMP_PROC_BIND) \
+			OMP_PLACES=$(OMP_PLACES) \
 			./$(PIPE); \
 		done \
 	done
@@ -75,6 +89,8 @@ run_mpi_local:
 	@for i in $$(seq 1 10); do \
     	mpiexec -n $(NP) \
 			-genv OMP_NUM_THREADS $(THREADS) \
+			-genv OMP_PROC_BIND=$(OMP_PROC_BIND) \
+			-genv OMP_PLACES=$(OMP_PLACES) \
 			./$(PIPE_MPI); \
 	done
 
@@ -87,13 +103,15 @@ run_all_mpi_local:
 		for i in $$(seq 1 10); do \
 			mpiexec -n $$np \
 				-genv OMP_NUM_THREADS=$$omp \
+				-genv OMP_PROC_BIND=$(OMP_PROC_BIND) \
+				-genv OMP_PLACES=$(OMP_PLACES) \
 				./$(PIPE_MPI); \
 		done \
 	done
 
 run_mpi_cluster:
 	@for i in $$(seq 1 10); do \
-		mpiexec -f $(HOSTFILE) -n $(NP) -env OMP_NUM_THREADS $(THREADS) ./$(PIPE_MPI) $(NODES); \
+		mpiexec -f $(HOSTFILE) -n $(NP) -env OMP_NUM_THREADS $(THREADS) -env OMP_PROC_BIND=$(OMP_PROC_BIND) -env OMP_PLACES=$(OMP_PLACES) ./$(PIPE_MPI) $(NODES); \
 	done
 
 run_all_mpi_cluster:
@@ -105,6 +123,8 @@ run_all_mpi_cluster:
 		for i in $$(seq 1 10); do \
 			mpiexec -f $(HOSTFILE) -n $$np \
 				-genv OMP_NUM_THREADS=$$omp \
+				-genv OMP_PROC_BIND=$(OMP_PROC_BIND) \
+				-genv OMP_PLACES=$(OMP_PLACES) \
 				./$(PIPE_MPI) $(NODES); \
 		done \
 	done
@@ -114,7 +134,7 @@ run_all_tests:
 	$(MAKE) run_all_seq_omp
 	$(MAKE) run_all_pipe
 	$(MAKE) run_all_mpi_local
-	$(MAKE) run_all_mpi_cluster	
+	$(MAKE) run_all_mpi_cluster
 
 run_all_local_tests:
 	$(MAKE) run_seq
