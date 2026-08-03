@@ -10,8 +10,14 @@ N_JOBS = 100000
 # REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
 # ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
-REPORT_DIR = f"./report_out/flto_O3/no_bind/"
-ANALYSIS_DIR = f"./analysis/flto_O3/no_bind/"
+# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/monotonic/"
+# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/monotonic/"
+
+# REPORT_DIR = f"./report_out/flto_O3/"
+# ANALYSIS_DIR = f"./analysis/flto_O3/"
+
+REPORT_DIR = f"./report_out/flto_O3/monotonic/"
+ANALYSIS_DIR = f"./analysis/flto_O3/monotonic/"
 
 PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
 METRICS_DIR = f"{ANALYSIS_DIR}metrics/"

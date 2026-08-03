@@ -36,7 +36,8 @@ int main(int argc, char *argv[]) {
     int global_success = 0;
     struct timespec t0, t1;
     printf("\nSequential execution starting...");
-    clock_gettime(CLOCK_MONOTONIC, &t0); // Prendo il tempo di inizio
+    // clock_gettime(CLOCK_MONOTONIC, &t0); // Prendo il tempo di inizio
+    timespec_get(&t0, TIME_UTC);
 
     for (int i = 0; i < N_JOBS; i++) {
         kem_job job;
@@ -47,7 +48,8 @@ int main(int argc, char *argv[]) {
             global_success++;
         }
     }
-    clock_gettime(CLOCK_MONOTONIC, &t1); // Prendo il tempo di fine
+    // clock_gettime(CLOCK_MONOTONIC, &t1); // Prendo il tempo di fine
+    timespec_get(&t1, TIME_UTC);
     double elapsed_time = (t1.tv_sec - t0.tv_sec) + (t1.tv_nsec - t0.tv_nsec) / 1e9;
     
     // Stampa dei risultati
