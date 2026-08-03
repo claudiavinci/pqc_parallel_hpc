@@ -1,0 +1,109 @@
+{
+    "seq_omp": {
+        "speedup": {
+            "value": 1.113,
+            "time": 24.417,
+            "efficiency": 0.371,
+            "throughput": 4095.538,
+            "threads": 3
+        },
+        "efficiency": {
+            "value": 0.5,
+            "time": 27.145,
+            "speedup": 1.001,
+            "throughput": 3683.944,
+            "threads": 2
+        },
+        "throughput": {
+            "value": 4095.538,
+            "time": 24.417,
+            "speedup": 1.113,
+            "efficiency": 0.371,
+            "threads": 3
+        }
+    },
+    "pipe": {
+        "speedup": {
+            "value": 4.305,
+            "time": 6.313,
+            "efficiency": 0.538,
+            "throughput": 15839.996,
+            "threads": 8
+        },
+        "efficiency": {
+            "value": 0.765,
+            "time": 17.761,
+            "speedup": 1.53,
+            "throughput": 5630.28,
+            "threads": 2
+        },
+        "throughput": {
+            "value": 15839.996,
+            "time": 6.313,
+            "speedup": 4.305,
+            "efficiency": 0.538,
+            "threads": 8
+        }
+    },
+    "pipe_mpi": {
+        "speedup": {
+            "value": 4.872,
+            "time": 5.578,
+            "efficiency": 0.609,
+            "throughput": 17926.086,
+            "threads": 4,
+            "mpi_ranks": 2,
+            "tot_workers": 8
+        },
+        "efficiency": {
+            "value": 0.796,
+            "time": 8.541,
+            "speedup": 3.182,
+            "throughput": 11708.469,
+            "threads": 2,
+            "mpi_ranks": 2,
+            "tot_workers": 4
+        },
+        "throughput": {
+            "value": 17926.086,
+            "time": 5.578,
+            "speedup": 4.872,
+            "efficiency": 0.609,
+            "threads": 4,
+            "mpi_ranks": 2,
+            "tot_workers": 8
+        }
+    },
+    "pipe_mpi_cluster": {
+        "speedup": {
+            "value": 8.035,
+            "time": 3.382,
+            "efficiency": 0.502,
+            "throughput": 29564.415,
+            "threads": 8,
+            "mpi_ranks": 2,
+            "tot_workers": 16,
+            "nodes": 2
+        },
+        "efficiency": {
+            "value": 0.873,
+            "time": 7.783,
+            "speedup": 3.492,
+            "throughput": 12849.643,
+            "threads": 2,
+            "mpi_ranks": 2,
+            "tot_workers": 4,
+            "nodes": 2
+        },
+        "throughput": {
+            "value": 29564.415,
+            "time": 3.382,
+            "speedup": 8.035,
+            "efficiency": 0.502,
+            "threads": 8,
+            "mpi_ranks": 2,
+            "tot_workers": 16,
+            "nodes": 2
+        }
+    }
+}
