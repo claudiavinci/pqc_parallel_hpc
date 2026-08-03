@@ -10,7 +10,8 @@ HOSTFILE ?= hosts.txt
 NODES ?= 2
 
 # Runtime OpenMP
-OMP_PROC_BIND ?= false
+OMP_PROC_BIND ?= spread
+OMP_PLACES ?= cores
 # --------- INCLUDE -------------
 COMMON_INC=-I common
 INC_SEQ=-I ml-kem-768
@@ -56,6 +57,7 @@ run_all_seq_omp:
 		for i in $$(seq 1 10); do \
 			OMP_NUM_THREADS=$$omp \
 			OMP_PROC_BIND=$(OMP_PROC_BIND) \
+			OMP_PLACES=$(OMP_PLACES) \
 			./$(SEQ_OMP); \
 		done \
 	done
@@ -63,7 +65,6 @@ run_all_seq_omp:
 run_pipe:
 	@for i in $$(seq 1 10); do \
 		OMP_NUM_THREADS=$(THREADS) \
-		OMP_PROC_BIND=$(OMP_PROC_BIND) \
 		./$(PIPE); \
 	done
 
@@ -72,6 +73,7 @@ run_all_pipe:
 		for i in $$(seq 1 10); do \
 			OMP_NUM_THREADS=$$omp \
 			OMP_PROC_BIND=$(OMP_PROC_BIND) \
+			OMP_PLACES=$(OMP_PLACES) \
 			./$(PIPE); \
 		done \
 	done
@@ -80,7 +82,6 @@ run_mpi_local:
 	@for i in $$(seq 1 10); do \
     	mpiexec -n $(NP) \
 			-genv OMP_NUM_THREADS $(THREADS) \
-			-genv OMP_PROC_BIND=$(OMP_PROC_BIND) \
 			./$(PIPE_MPI); \
 	done
 
@@ -94,6 +95,7 @@ run_all_mpi_local:
 			mpiexec -n $$np \
 				-genv OMP_NUM_THREADS=$$omp \
 				-genv OMP_PROC_BIND=$(OMP_PROC_BIND) \
+				-genv OMP_PLACES=$(OMP_PLACES) \
 				./$(PIPE_MPI); \
 		done \
 	done
@@ -113,6 +115,7 @@ run_all_mpi_cluster:
 			mpiexec -f $(HOSTFILE) -n $$np \
 				-genv OMP_NUM_THREADS=$$omp \
 				-genv OMP_PROC_BIND=$(OMP_PROC_BIND) \
+				-genv OMP_PLACES=$(OMP_PLACES) \
 				./$(PIPE_MPI) $(NODES); \
 		done \
 	done
