@@ -7,11 +7,11 @@ import json
 import seaborn as sns
 
 N_JOBS = 100000
-# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
-# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
+REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
+ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
-REPORT_DIR = f"./report_out/flto_O3/"
-ANALYSIS_DIR = f"./analysis/flto_O3/"
+# REPORT_DIR = f"./report_out/flto_O3/"
+# ANALYSIS_DIR = f"./analysis/flto_O3/"
 
 PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
 METRICS_DIR = f"{ANALYSIS_DIR}metrics/"
@@ -24,7 +24,7 @@ TIME_METRICS = {
 }
 
 def preprocess_dataframe(df:DataFrame, groupby_cols:list):
-    return df.groupby(groupby_cols, as_index=False).agg(TIME_SEC=("TIME_SEC", "median"), THROUGHPUT_JS=("THROUGHPUT_JS", "median"), KEYGEN_SEC=("KEYGEN_SEC", "median"), ENC_SEC=("ENC_SEC", "median"), DEC_SEC=("DEC_SEC", "median")).round(3).sort_values("TOT_WORKERS").reset_index(drop=True)
+    return df.groupby(groupby_cols, as_index=False).agg(TIME_SEC=("TIME_SEC", "median"), THROUGHPUT_JS=("THROUGHPUT_JS", "median"), KEYGEN_SEC=("KEYGEN_SEC", "median"), ENC_SEC=("ENC_SEC", "median"), DEC_SEC=("DEC_SEC", "median")).round(6).sort_values("TOT_WORKERS").reset_index(drop=True)
 
 def add_speedup_efficiency(df: DataFrame, baseline, metric, name):
     speedup = f"{name}_SPEEDUP"
@@ -73,7 +73,6 @@ def add_mpi_info(result, row, df_name):
     if "cluster" in df_name:
         result["nodes"] = int(row["NODES"])
         result["tot_workers"] = int(row["TOT_WORKERS"])
-
 
 def evaluate_metrics(df: DataFrame, baselines, df_name):
     results = {}
@@ -263,6 +262,94 @@ def plot_mpi_metrics(df, label, output_dir):
             plot_heatmap(df, "THROUGHPUT_JS", f"MPI+OMP Throughput ({label})", f"{output_dir}/heatmap_throughput.png")
             plot_iso_mpi(df, "THROUGHPUT_JS", f"MPI+OMP Throughput ({label})", f"{output_dir}/throughput.png")
 
+def plot_total_stage_times(df: DataFrame, title: str, savepath: str):
+    # Bar plot total stage time per ogni configurazione.
+
+    # Ordinamento configurazioni
+    if "MPI_RANKS" in df.columns:
+        df = df.sort_values(
+            ["TOT_WORKERS", "MPI_RANKS", "OMP_THREADS"]
+        )
+        labels = [f"{r}×{t}\n({r*t})" for r, t in zip(df["MPI_RANKS"], df["OMP_THREADS"])]
+        xlabel = "MPI Ranks × OMP Threads (Total Workers)"
+
+    else:
+        labels = [str(w) for w in df["TOT_WORKERS"]]
+        xlabel = "Total Workers"
+
+    x = np.arange(len(df))
+    width = 0.25
+
+    plt.figure(figsize=(max(8, len(df)*0.8), 5), dpi=300)
+
+    plt.bar(x - width, df["KEYGEN_SEC"], width, label=r"Keygen ($T_{keygen}$)")
+
+    plt.bar(x, df["ENC_SEC"], width, label=r"Encapsulation ($T_{enc}$)")
+
+    plt.bar(x + width, df["DEC_SEC"], width, label=r"Decapsulation ($T_{dec}$)")
+
+    plt.xticks(x, labels)
+
+    plt.xlabel(xlabel)
+    plt.ylabel("Total Stage time(s)")
+
+    plt.title(title)
+
+    plt.grid(axis="y", linestyle="--", alpha=0.5)
+
+    plt.legend()
+    plt.tight_layout()
+    plt.savefig(savepath)
+    plt.close()
+
+def plot_throughput_theoretical_vs_measured_omp(df: DataFrame, title: str, savepath: str):
+
+    workers = df["TOT_WORKERS"].values
+    # Tempo totale del bottleneck stage
+    t_bottleneck = df[
+        ["KEYGEN_SEC", "ENC_SEC", "DEC_SEC"]
+    ].max(axis=1)
+
+    # Throughput teorico della pipeline
+    # I tempi sono già misurati con OpenMP,
+    # quindi NON si moltiplica per OMP_THREADS
+    theoretical_tp = df["TOT_WORKERS"] / t_bottleneck
+
+    measured_tp = df["THROUGHPUT_JS"]
+
+
+    plt.figure(figsize=(8,5), dpi=300)
+
+    plt.plot(
+        workers,
+        theoretical_tp,
+        marker="o",
+        linestyle="--",
+        linewidth=2,
+        label="Bottleneck-limited throughput (ideal)"
+    )
+
+    plt.plot(
+        workers,
+        measured_tp,
+        marker="s",
+        linewidth=2,
+        label="Measured throughput"
+    )
+
+    plt.xlabel("Total Workers")
+    plt.ylabel("Throughput (job/s)")
+    plt.title(title)
+
+    plt.xticks(workers)
+    plt.grid(True, linestyle="--", alpha=0.5)
+    plt.legend()
+
+    plt.tight_layout()
+    plt.savefig(savepath)
+    plt.close()
+
+
 if __name__ == "__main__":
     
     # -------------- REPORTS READING ------------------------
@@ -314,7 +401,13 @@ if __name__ == "__main__":
     
     # -------------- METRICS PLOTS ------------------------
 
-    plot_omp_metrics(seq_omp_mean, pipe_mean)
-    plot_mpi_metrics(pipe_mpi_mean, "1 node", f"{PLOTS_DIR}/mpi_local/")
-    plot_mpi_metrics(pipe_mpi_cluster_mean, "2 nodes", f"{PLOTS_DIR}/mpi_cluster/")
+    # plot_omp_metrics(seq_omp_mean, pipe_mean)
+    # plot_mpi_metrics(pipe_mpi_mean, "1 node", f"{PLOTS_DIR}/mpi_local/")
+    # plot_mpi_metrics(pipe_mpi_cluster_mean, "2 nodes", f"{PLOTS_DIR}/mpi_cluster/")
+
+    # -------------- STAGE SERVICE TIMES PLOTS ------------------------
+
+    plot_total_stage_times(pipe_mean, "Pipeline OMP Total Stage Times", f"{PLOTS_DIR}/pipe_tot_stage_time.png")
+    plot_total_stage_times(pipe_mpi_mean, "MPI+OMP Total Stage Times (1 node)", f"{PLOTS_DIR}/mpi_local/mpi_tot_stage_time.png")
+    plot_total_stage_times(pipe_mpi_cluster_mean, "MPI+OMP Total Stage Times (2 nodes)", f"{PLOTS_DIR}/mpi_cluster/mpi_cluster_tot_stage_time.png")
 
