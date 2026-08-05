@@ -7,8 +7,8 @@ import json
 import seaborn as sns
 
 N_JOBS = 100000
-REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
-ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
+# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
+# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
 REPORT_DIR = f"./report_out/flto_O3/"
 ANALYSIS_DIR = f"./analysis/flto_O3/"
@@ -97,7 +97,7 @@ def evaluate_metrics(df: DataFrame, baselines, df_name):
 
     return results
 
-def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, savepath:str):
+def plot_metrics(df1, colx, coly, title: str, xlabel: str, ylabel: str, savepath:str, df2 = None):
     plt.figure()
     
     plt.plot(
@@ -107,17 +107,18 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
         label="Sequential (OMP)"
     )
 
-    plt.plot(
-        df2[colx],
-        df2[coly],
-        marker="o", 
-        label="Pipeline (OMP)"
-    )
+    if df2 is not None:
+        plt.plot(
+            df2[colx],
+            df2[coly],
+            marker="o", 
+            label="Pipeline (OMP)"
+        )
 
     if "SPEEDUP" in coly:
         plt.plot(
-            df2["TOT_WORKERS"],
-            df2["TOT_WORKERS"],
+            df1["TOT_WORKERS"],
+            df1["TOT_WORKERS"],
             "--",
             marker="o", 
             color="gray",
@@ -140,32 +141,44 @@ def plot_metrics(df1, df2, colx, coly, title: str, xlabel: str, ylabel: str, sav
 def plot_omp_metrics(seq_omp_mean, pipe_mean):
     for name, metric in TIME_METRICS.items():
         plot_metrics(seq_omp_mean, 
-                     pipe_mean, 
                      colx="TOT_WORKERS", 
                      coly=f"{name}_SPEEDUP", 
                      title=f"Sequential OMP vs. Pipeline OMP {name.capitalize()} Speedup", 
                      xlabel="Total Workers (Threads)", 
                      ylabel="Speedup", 
-                     savepath=f"{PLOTS_DIR}{name.lower()}_speedup.png")
+                     savepath=f"{PLOTS_DIR}{name.lower()}_speedup.png",
+                     df2=pipe_mean
+        )
         
         plot_metrics(seq_omp_mean, 
-                     pipe_mean, 
                      colx="TOT_WORKERS", 
                      coly=f"{name}_EFFICIENCY", 
                      title=f"Sequential OMP vs. Pipeline OMP {name.capitalize()} Efficiency", 
                      xlabel="Total Workers (Threads)", 
                      ylabel="Efficiency", 
-                     savepath=f"{PLOTS_DIR}{name.lower()}_efficiency.png")
+                     savepath=f"{PLOTS_DIR}{name.lower()}_efficiency.png",
+                     df2=pipe_mean
+        )
+
+        plot_metrics(seq_omp_mean,
+                     colx="TOT_WORKERS",
+                     coly=f"{name}_SPEEDUP",
+                     title=f"Sequential OMP {name.capitalize()} Speedup",
+                     xlabel="Total Workers (Threads)",
+                     ylabel="Speedup",
+                     savepath=f"{PLOTS_DIR}{name.lower()}_seqomp_speedup.png"
+        )
         
         if name == "TOTAL":
             plot_metrics(seq_omp_mean, 
-                         pipe_mean, 
                          colx="TOT_WORKERS", 
                          coly="THROUGHPUT_JS", 
                          title="Sequential OMP vs. Pipeline OMP Throughput", 
                          xlabel="Total Workers (Threads)", 
                          ylabel="Throughput (job/s)", 
-                         savepath=f"{PLOTS_DIR}throughput_scaling.png")
+                         savepath=f"{PLOTS_DIR}throughput_scaling.png", 
+                         df2=pipe_mean, 
+            )
 
 def plot_heatmap(df, metric, title, savepath):
     pivot = df.pivot_table(
@@ -302,7 +315,6 @@ if __name__ == "__main__":
     # -------------- METRICS PLOTS ------------------------
 
     plot_omp_metrics(seq_omp_mean, pipe_mean)
-
     plot_mpi_metrics(pipe_mpi_mean, "1 node", f"{PLOTS_DIR}/mpi_local/")
     plot_mpi_metrics(pipe_mpi_cluster_mean, "2 nodes", f"{PLOTS_DIR}/mpi_cluster/")
 
