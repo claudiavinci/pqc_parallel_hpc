@@ -3,21 +3,21 @@
         "TOTAL": {
             "speedup": {
                 "value": 1.108,
-                "time": 14.579,
+                "time": 14.579433,
                 "efficiency": 0.369,
-                "throughput": 6858.977,
+                "throughput": 6858.977235,
                 "threads": 3
             },
             "efficiency": {
                 "value": 0.478,
-                "time": 16.923,
+                "time": 16.923372,
                 "speedup": 0.955,
-                "throughput": 5908.991,
+                "throughput": 5908.990886,
                 "threads": 2
             },
             "throughput": {
-                "value": 6858.977,
-                "time": 14.579,
+                "value": 6858.977235,
+                "time": 14.579433,
                 "speedup": 1.108,
                 "efficiency": 0.369,
                 "threads": 3
@@ -26,48 +26,48 @@
         "KEYGEN": {
             "speedup": {
                 "value": 1.169,
-                "time": 4.391,
+                "time": 4.391366,
                 "efficiency": 0.39,
-                "throughput": 6858.977,
+                "throughput": 6858.977235,
                 "threads": 3
             },
             "efficiency": {
                 "value": 0.491,
-                "time": 5.227,
+                "time": 5.22696,
                 "speedup": 0.982,
-                "throughput": 5908.991,
+                "throughput": 5908.990886,
                 "threads": 2
             }
         },
         "ENC": {
             "speedup": {
                 "value": 1.115,
-                "time": 5.182,
+                "time": 5.181506,
                 "efficiency": 0.372,
-                "throughput": 6858.977,
+                "throughput": 6858.977235,
                 "threads": 3
             },
             "efficiency": {
                 "value": 0.482,
-                "time": 5.988,
+                "time": 5.988452,
                 "speedup": 0.965,
-                "throughput": 5908.991,
+                "throughput": 5908.990886,
                 "threads": 2
             }
         },
         "DEC": {
             "speedup": {
                 "value": 1.053,
-                "time": 6.493,
+                "time": 6.49309,
                 "efficiency": 0.351,
-                "throughput": 6858.977,
+                "throughput": 6858.977235,
                 "threads": 3
             },
             "efficiency": {
                 "value": 0.472,
-                "time": 7.237,
+                "time": 7.237174,
                 "speedup": 0.945,
-                "throughput": 5908.991,
+                "throughput": 5908.990886,
                 "threads": 2
             }
         }
@@ -76,21 +76,21 @@
         "TOTAL": {
             "speedup": {
                 "value": 4.107,
-                "time": 3.934,
+                "time": 3.93385,
                 "efficiency": 0.513,
-                "throughput": 25420.455,
+                "throughput": 25420.454835,
                 "threads": 8
             },
             "efficiency": {
                 "value": 0.706,
-                "time": 11.434,
+                "time": 11.433669,
                 "speedup": 1.413,
-                "throughput": 8746.109,
+                "throughput": 8746.109162,
                 "threads": 2
             },
             "throughput": {
-                "value": 25420.455,
-                "time": 3.934,
+                "value": 25420.454835,
+                "time": 3.93385,
                 "speedup": 4.107,
                 "efficiency": 0.513,
                 "threads": 8
@@ -99,48 +99,48 @@
         "KEYGEN": {
             "speedup": {
                 "value": 0.675,
-                "time": 7.598,
+                "time": 7.597676,
                 "efficiency": 0.338,
-                "throughput": 8746.109,
+                "throughput": 8746.109162,
                 "threads": 2
             },
             "efficiency": {
                 "value": 0.338,
-                "time": 7.598,
+                "time": 7.597676,
                 "speedup": 0.675,
-                "throughput": 8746.109,
+                "throughput": 8746.109162,
                 "threads": 2
             }
         },
         "ENC": {
             "speedup": {
                 "value": 0.728,
-                "time": 7.942,
+                "time": 7.94164,
                 "efficiency": 0.364,
-                "throughput": 8746.109,
+                "throughput": 8746.109162,
                 "threads": 2
             },
             "efficiency": {
                 "value": 0.364,
-                "time": 7.942,
+                "time": 7.94164,
                 "speedup": 0.728,
-                "throughput": 8746.109,
+                "throughput": 8746.109162,
                 "threads": 2
             }
         },
         "DEC": {
             "speedup": {
                 "value": 0.743,
-                "time": 9.204,
+                "time": 9.203865,
                 "efficiency": 0.372,
-                "throughput": 8746.109,
+                "throughput": 8746.109162,
                 "threads": 2
             },
             "efficiency": {
                 "value": 0.372,
-                "time": 9.204,
+                "time": 9.203865,
                 "speedup": 0.743,
-                "throughput": 8746.109,
+                "throughput": 8746.109162,
                 "threads": 2
             }
         }
@@ -149,25 +149,25 @@
         "TOTAL": {
             "speedup": {
                 "value": 4.137,
-                "time": 3.906,
+                "time": 3.906062,
                 "efficiency": 0.517,
-                "throughput": 25601.245,
+                "throughput": 25601.244788,
                 "threads": 4,
                 "mpi_ranks": 2,
                 "tot_workers": 8
             },
             "efficiency": {
                 "value": 0.637,
-                "time": 6.339,
+                "time": 6.339398,
                 "speedup": 2.549,
-                "throughput": 15774.451,
+                "throughput": 15774.45138,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4
             },
             "throughput": {
-                "value": 25601.245,
-                "time": 3.906,
+                "value": 25601.244788,
+                "time": 3.906062,
                 "speedup": 4.137,
                 "efficiency": 0.517,
                 "threads": 4,
@@ -178,18 +178,18 @@
         "KEYGEN": {
             "speedup": {
                 "value": 0.622,
-                "time": 8.246,
+                "time": 8.245767,
                 "efficiency": 0.156,
-                "throughput": 15774.451,
+                "throughput": 15774.45138,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4
             },
             "efficiency": {
                 "value": 0.156,
-                "time": 8.246,
+                "time": 8.245767,
                 "speedup": 0.622,
-                "throughput": 15774.451,
+                "throughput": 15774.45138,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4
@@ -198,18 +198,18 @@
         "ENC": {
             "speedup": {
                 "value": 0.663,
-                "time": 8.712,
+                "time": 8.712236,
                 "efficiency": 0.166,
-                "throughput": 15774.451,
+                "throughput": 15774.45138,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4
             },
             "efficiency": {
                 "value": 0.166,
-                "time": 8.712,
+                "time": 8.712236,
                 "speedup": 0.663,
-                "throughput": 15774.451,
+                "throughput": 15774.45138,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4
@@ -218,18 +218,18 @@
         "DEC": {
             "speedup": {
                 "value": 0.679,
-                "time": 10.075,
+                "time": 10.07504,
                 "efficiency": 0.17,
-                "throughput": 15774.451,
+                "throughput": 15774.45138,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4
             },
             "efficiency": {
                 "value": 0.17,
-                "time": 10.075,
+                "time": 10.07504,
                 "speedup": 0.679,
-                "throughput": 15774.451,
+                "throughput": 15774.45138,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4
@@ -240,9 +240,9 @@
         "TOTAL": {
             "speedup": {
                 "value": 6.227,
-                "time": 2.595,
+                "time": 2.594842,
                 "efficiency": 0.389,
-                "throughput": 38541.923,
+                "throughput": 38541.923364,
                 "threads": 2,
                 "mpi_ranks": 8,
                 "tot_workers": 16,
@@ -250,17 +250,17 @@
             },
             "efficiency": {
                 "value": 0.711,
-                "time": 5.683,
+                "time": 5.682684,
                 "speedup": 2.843,
-                "throughput": 17597.437,
+                "throughput": 17597.437374,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4,
                 "nodes": 2
             },
             "throughput": {
-                "value": 38541.923,
-                "time": 2.595,
+                "value": 38541.923364,
+                "time": 2.594842,
                 "speedup": 6.227,
                 "efficiency": 0.389,
                 "threads": 2,
@@ -272,9 +272,9 @@
         "KEYGEN": {
             "speedup": {
                 "value": 0.826,
-                "time": 6.212,
+                "time": 6.212369,
                 "efficiency": 0.206,
-                "throughput": 17597.437,
+                "throughput": 17597.437374,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4,
@@ -282,9 +282,9 @@
             },
             "efficiency": {
                 "value": 0.206,
-                "time": 6.212,
+                "time": 6.212369,
                 "speedup": 0.826,
-                "throughput": 17597.437,
+                "throughput": 17597.437374,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4,
@@ -294,9 +294,9 @@
         "ENC": {
             "speedup": {
                 "value": 0.878,
-                "time": 6.583,
+                "time": 6.58255,
                 "efficiency": 0.22,
-                "throughput": 17597.437,
+                "throughput": 17597.437374,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4,
@@ -304,9 +304,9 @@
             },
             "efficiency": {
                 "value": 0.22,
-                "time": 6.583,
+                "time": 6.58255,
                 "speedup": 0.878,
-                "throughput": 17597.437,
+                "throughput": 17597.437374,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4,
@@ -316,9 +316,9 @@
         "DEC": {
             "speedup": {
                 "value": 0.894,
-                "time": 7.647,
+                "time": 7.647298,
                 "efficiency": 0.224,
-                "throughput": 17597.437,
+                "throughput": 17597.437374,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4,
@@ -326,9 +326,9 @@
             },
             "efficiency": {
                 "value": 0.224,
-                "time": 7.647,
+                "time": 7.647298,
                 "speedup": 0.894,
-                "throughput": 17597.437,
+                "throughput": 17597.437374,
                 "threads": 2,
                 "mpi_ranks": 2,
                 "tot_workers": 4,

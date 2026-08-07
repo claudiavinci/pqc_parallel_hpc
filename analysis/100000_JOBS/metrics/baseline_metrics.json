@@ -1,0 +1,14 @@
+{
+    "service_times": {
+        "KEYGEN": 0.0808,
+        "ENC": 0.09515000000000001,
+        "DEC": 0.11849
+    },
+    "balance_ratio": 1.466,
+    "throughput_baseline": 3737.759,
+    "throughput_per_stage": {
+        "KEYGEN": 12376.238,
+        "ENC": 10509.721,
+        "DEC": 8439.531
+    }
+}
