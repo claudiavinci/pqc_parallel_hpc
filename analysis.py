@@ -7,11 +7,11 @@ import json
 import seaborn as sns
 
 N_JOBS = 100000
-REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/final/"
-ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/final/"
+# REPORT_DIR = f"./report_out/{N_JOBS}_JOBS/"
+# ANALYSIS_DIR = f"./analysis/{N_JOBS}_JOBS/"
 
-# REPORT_DIR = f"./report_out/flto_O3/final/"
-# ANALYSIS_DIR = f"./analysis/flto_O3/final/"
+REPORT_DIR = f"./report_out/flto_O3/"
+ANALYSIS_DIR = f"./analysis/flto_O3/"
 
 PLOTS_DIR = f"{ANALYSIS_DIR}plots/"
 METRICS_DIR = f"{ANALYSIS_DIR}metrics/"
