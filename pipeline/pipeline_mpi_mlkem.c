@@ -33,65 +33,38 @@ int main(int argc, char *argv[]) {
     fflush(stdout);
     
     MPI_Barrier(MPI_COMM_WORLD);
-
+    double t0 = MPI_Wtime(); // Prendo il tempo di inizio
     int global_success = 0;
     int local_success = 0;
-    double keygen_sec = 0.0; 
-    double enc_sec = 0.0;
-    double dec_sec = 0.0;
-    double keygen_sec_global = 0.0;
-    double enc_sec_global = 0.0;
-    double dec_sec_global = 0.0;
-
-    double t0 = MPI_Wtime(); // Prendo il tempo di inizio
 
     static kem_job jobs[N_JOBS];
-    
-    static kem_timing timings[N_JOBS];
 
     int job_chunk = N_JOBS/size;
     int rem_jobs = N_JOBS % size;
     int start_job = rank * job_chunk + (rank < rem_jobs ? rank : rem_jobs);
     int end_job = start_job + job_chunk + (rank < rem_jobs ? 1 : 0);
 
-    run_pipeline_omp(jobs, &local_success, start_job, end_job, timings);
+    run_pipeline_omp(jobs, &local_success, start_job, end_job);
 
     MPI_Barrier(MPI_COMM_WORLD);
     double t1 = MPI_Wtime();
     double local_elapsed = t1 - t0;
     double global_elapsed = 0.0;
 
-    for (int i = start_job; i < end_job; i++) {
-
-        keygen_sec += timings[i].keygen_time;
-        enc_sec += timings[i].enc_time;
-        dec_sec += timings[i].dec_time;
-
-    } 
-
     MPI_Reduce(&local_elapsed, &global_elapsed, 1, MPI_DOUBLE, MPI_MAX, 0, MPI_COMM_WORLD);
 
     MPI_Reduce(&local_success, &global_success, 1, MPI_INT, MPI_SUM, 0, MPI_COMM_WORLD);
-
-    MPI_Reduce(&keygen_sec, &keygen_sec_global, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
-    MPI_Reduce(&enc_sec, &enc_sec_global, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
-
-    MPI_Reduce(&dec_sec, &dec_sec_global, 1, MPI_DOUBLE, MPI_SUM, 0, MPI_COMM_WORLD);
     
     if (rank == 0){
         write_report(REPORT_PATH,
-                        "pipeline_mpi_results.csv",
-                        OMP_ENABLED,
-                        size,
-                        N_THREADS,
-                        n_nodes,
-                        N_JOBS,
-                        global_success,
-                        global_elapsed,
-                        keygen_sec_global,
-                        enc_sec_global,
-                        dec_sec_global
+                     "pipeline_mpi_results.csv",
+                     OMP_ENABLED,
+                     size,
+                     N_THREADS,
+                     n_nodes,
+                     N_JOBS,
+                     global_success,
+                     global_elapsed
                     );
 
         printf("\n=== PIPELINE OMP+MPI EXECUTION COMPLETED ===\n");

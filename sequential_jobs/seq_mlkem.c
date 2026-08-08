@@ -69,7 +69,7 @@ int main(int argc, char *argv[]) {
     
     // Stampa dei risultati
 
-    write_report(REPORT_PATH, "seq_mlkem_results.csv", OMP_ENABLED, MPI_RANKS, N_THREADS, NODES, N_JOBS, global_success, elapsed_time, keygen_sec, enc_sec, dec_sec);
+    write_report_stages(REPORT_PATH, "seq_mlkem_results.csv", OMP_ENABLED, MPI_RANKS, N_THREADS, NODES, N_JOBS, global_success, elapsed_time, keygen_sec, enc_sec, dec_sec);
 
     printf("\n========== SEQUENTIAL EXECUTION COMPLETED ==========\n");
     return 0;

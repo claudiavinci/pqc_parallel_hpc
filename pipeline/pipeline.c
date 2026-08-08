@@ -22,7 +22,7 @@ static inline int check_stage(kem_job *job){
     return memcmp(job->ss_enc, job->ss_dec, PQCLEAN_MLKEM768_CLEAN_CRYPTO_BYTES) == 0;
 }
 
-void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job, kem_timing *timings) {
+void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job){
 
     #pragma omp parallel
     {
@@ -33,24 +33,19 @@ void run_pipeline_omp(kem_job *jobs, int *success, int start_job, int end_job, k
                 // ---------- KEYGEN STAGE ----------
                 #pragma omp task firstprivate(i) depend(out: jobs[i].pk, jobs[i].sk)
                 {
-                    double t = omp_get_wtime();
                     keygen_stage(&jobs[i]);
-                    timings[i].keygen_time = omp_get_wtime() - t;}
+                }
 
                 // ---------- ENCAPSULATION STAGE ----------
                 #pragma omp task firstprivate(i) depend(in: jobs[i].pk, jobs[i].sk) depend(out: jobs[i].ct, jobs[i].ss_enc)
                 {
-                    double t = omp_get_wtime();
                     enc_stage(&jobs[i]);
-                    timings[i].enc_time = omp_get_wtime() - t;
                 }
 
                 // ---------- DECAPSULATION STAGE ----------
                 #pragma omp task firstprivate(i) depend(in: jobs[i].ct, jobs[i].ss_enc) depend(out: jobs[i].ss_dec)
                 {
-                    double t = omp_get_wtime();
-                    dec_stage(&jobs[i]);
-                    timings[i].dec_time = omp_get_wtime() - t;      
+                        dec_stage(&jobs[i]);
                 }
 
                 // ---------- CHECK STAGE ----------

@@ -3,6 +3,6 @@
 
 #include "../common.h"
 
-void run_pipeline_omp(kem_job *jobs, int *global_success, int start_job, int end_job, kem_timing *timings);
+void run_pipeline_omp(kem_job *jobs, int *global_success, int start_job, int end_job);
 
 #endif /* PIPELINE_H */
